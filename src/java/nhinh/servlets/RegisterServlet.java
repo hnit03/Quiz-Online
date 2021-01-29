@@ -12,20 +12,22 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import nhinh.registration.RegistrationDAO;
+import nhinh.registration.RegistrationDTO;
 import nhinh.utils.SHA256;
 
 /**
  *
  * @author PC
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "RegisterServlet", urlPatterns = {"/RegisterServlet"})
+public class RegisterServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,24 +42,36 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
+        String url = "register";
         try {
             /* TODO output your page here. You may use following sample code. */
             String email = request.getParameter("txtEmail");
             String password = request.getParameter("txtPassword");
-            if (!email.trim().isEmpty() && !password.trim().isEmpty()) {
-                RegistrationDAO dao = new RegistrationDAO();
-                SHA256 sha = new SHA256();
-                String pw = sha.bytesToHex(password);
-                int roleID = dao.checkLogin(email, pw);
-                System.out.println(" 1 ");
+            String confirmPassword = request.getParameter("txtConfirmPassword");
+            String fullname = request.getParameter("txtFullname");
+            if (!email.trim().isEmpty() && !password.trim().isEmpty()&& !confirmPassword.trim().isEmpty()
+                    && !fullname.trim().isEmpty()) {
+                boolean err = false;
+                if (!err) {
+                    SHA256 sha = new SHA256();
+                    String pass = sha.bytesToHex(password);
+                    RegistrationDAO dao = new RegistrationDAO();
+                    RegistrationDTO dto = new RegistrationDTO(email, pass, fullname, 1, 1);
+                    boolean success = dao.createNewAccount(dto);
+                    if (success) {
+                        url = "signin";
+                    }
+                }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RegisterServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RegisterServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+            Logger.getLogger(RegisterServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            RequestDispatcher rd = request.getRequestDispatcher(url);
+            rd.forward(request, response);
             out.close();
         }
     }

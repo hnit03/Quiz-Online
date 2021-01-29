@@ -70,9 +70,7 @@ public class FilterDispatcher implements Filter {
         try {
             int lastIndex = uri.lastIndexOf("/");
             String resource = uri.substring(lastIndex+1);
-            System.out.println(resource + "111s");
             url = indexPage.get(resource);
-            System.out.println(url + "url");
             if (url != null) {
                 RequestDispatcher rd = req.getRequestDispatcher(url);
                 rd.forward(request, response);

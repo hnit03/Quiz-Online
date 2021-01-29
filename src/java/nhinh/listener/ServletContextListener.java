@@ -5,11 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.PropertyResourceBundle;
 import java.util.StringTokenizer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -25,7 +22,6 @@ import javax.servlet.ServletContextEvent;
  * @author PC
  */
 public class ServletContextListener implements javax.servlet.ServletContextListener {
-
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {

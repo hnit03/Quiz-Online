@@ -1,3 +1,5 @@
  =index.html
 login=LoginServlet
 register=register.jsp
+registerAcc=RegisterServlet
+signin=index.html

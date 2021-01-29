@@ -29,21 +29,18 @@ public class RegistrationDAO implements Serializable {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select statusID,email, password, roleID "
+                String sql = "select statusID,email, roleID "
                         + "from Registration "
                         + "where email = ? and password = ?";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, email);
-                SHA256 sha = new SHA256();
-                String pw = sha.bytesToHex(password);
                 ps.setString(2, password);
                 rs = ps.executeQuery();
                 if (rs.next()) {
                     int statusID = rs.getInt("statusID");
                     if (statusID == 1) {
                         String id = rs.getString("email");
-                        String pass = rs.getString("password");
-                        if (email.equals(id) && password.equals(pass)) {
+                        if (email.equals(id)) {
                             roleID = rs.getInt("roleID");
                         }
                     }
@@ -63,4 +60,33 @@ public class RegistrationDAO implements Serializable {
         return roleID;
     }
 
+    public boolean createNewAccount(RegistrationDTO dto) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "insert into Registration(email,password,fullname,roleID,statusID) "
+                        + "values(?,?,?,?,?)";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, dto.getEmail());
+                ps.setString(2, dto.getPassword());
+                ps.setString(3, dto.getFullname());
+                ps.setInt(4, dto.getRoleID());
+                ps.setInt(5, dto.getStatusID());
+                int success = ps.executeUpdate();
+                if (success == 1) {
+                    return true;
+                }
+            }
+        } finally {
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+        return false;
+    }
 }
