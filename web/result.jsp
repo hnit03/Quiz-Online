@@ -29,46 +29,29 @@
                     <c:set var="result" value="${requestScope.RESULT}"/>
                     <c:if test="${not empty result}">
                         <c:forEach var="question" items="${result}">
-                            <c:set var="answerChoosen" value="answer${question.key.questionID}"/>
-                            <c:out value="${answerChoosen}"/>
                             <div class="card">
                                 <div class="card-body ml-3">
                                     <h5 class="card-title">${question.key.content}</h5>
-                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault1" disabled
-                                           <c:if test="${param.answerChoosen eq question.key.answer1}">
-                                               checked
-                                           </c:if>
-                                           >
+
+                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault1" disabled>
                                     <label class="form-check-label" for="flexRadioDefault1">
                                         ${question.key.answer1}
                                     </label>
                                     <br>
 
-                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault2" disabled
-                                           <c:if test="${param.answerChoosen eq question.key.answer2}">
-                                               checked
-                                           </c:if>
-                                           >
+                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault2" disabled>
                                     <label class="form-check-label" for="flexRadioDefault2">
                                         ${question.key.answer2}
                                     </label>
                                     <br>
 
-                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault3" disabled
-                                           <c:if test="${param.answerChoosen eq question.key.answer3}">
-                                               checked
-                                           </c:if>
-                                           >
+                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault3" disabled>
                                     <label class="form-check-label" for="flexRadioDefault3">
                                         ${question.key.answer3}
                                     </label>
                                     <br>
 
-                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault4" disabled
-                                           <c:if test="${param.answerChoosen eq question.key.answer4}">
-                                               checked
-                                           </c:if>
-                                           >
+                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault4" disabled>
                                     <label class="form-check-label" for="flexRadioDefault4">
                                         ${question.key.answer4}
                                     </label>

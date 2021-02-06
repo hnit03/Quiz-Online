@@ -39,8 +39,27 @@
                                     <p>Answer 2: ${dto.answer2}</p>
                                     <p>Answer 3: ${dto.answer3}</p>
                                     <p>Answer 4: ${dto.answer4}</p>
-                                    <input type="submit" value="Update" class="btn btn-success"/>
-                                    <input type="submit" value="Delete" class="btn btn-warning"/>
+                                    <div class="row">
+                                        <div class="col-lg-9"></div>
+                                        <div class="col-lg-3 text-center">
+                                            <c:url var="update" value="get">
+                                                <c:param name="questionID" value="${dto.questionID}"/>
+                                            </c:url>
+                                            <a href="${update}" class="btn btn-success">Update</a>
+
+                                            <c:url var="delete" value="delete">
+                                                <c:param name="questionID" value="${dto.questionID}"/>
+                                            </c:url>
+                                            <a href="${delete}" 
+                                               <c:if test="${dto.statusID == 1}">
+                                                   class="btn btn-warning disabled"
+                                               </c:if>
+                                               <c:if test="${dto.statusID != 1}">
+                                                   class="btn btn-warning"
+                                               </c:if>
+                                               />Delete</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

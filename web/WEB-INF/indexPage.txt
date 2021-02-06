@@ -19,3 +19,4 @@ create=CreateQuestionServlet
 update=UpdateQuestionServlet
 get=GetQuestionToUpdateServlet
 delete=DeleteQuestionServlet
+updatePage=update.jsp

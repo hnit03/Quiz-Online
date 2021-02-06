@@ -46,7 +46,7 @@ public class ManageSubjectServlet extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             String subjectID = request.getParameter("subjectID");
             QuestionDAO dao = new QuestionDAO();
-            dao.getAllQuestion(subjectID);
+            dao.getAllQuestionByAdmin(subjectID);
             List<QuestionDTO> list = dao.getQuestionList();
             request.setAttribute("LIST_QUESTION", list);
             request.setAttribute("SUBJECTID", subjectID);

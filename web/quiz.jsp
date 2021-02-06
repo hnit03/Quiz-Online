@@ -26,12 +26,10 @@
                     </div>
                     <div class="col-lg-9">
                         <form name="exam" action="checkAnswer" method="POST">
-                            <c:forEach var="question" items="${listQuestion}">
-
-
+                            <c:forEach var="question" items="${listQuestion}" varStatus="counter">
                                 <div class="card">
                                     <div class="card-body ml-3">
-                                        <h5 class="card-title">${question.content}</h5>
+                                        <h5 class="card-title">Question ${counter.count}: ${question.content}</h5>
                                         <input class="form-check-input" type="radio" name="answer${question.questionID}" id="flexRadioDefault1" value="${question.answer1}">
                                         <label class="form-check-label" for="flexRadioDefault1">
                                             ${question.answer1}

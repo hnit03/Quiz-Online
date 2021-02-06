@@ -29,7 +29,53 @@ public class QuestionDAO implements Serializable {
         return questionList;
     }
 
-    public void getAllQuestion(String subjectID) throws SQLException, NamingException {
+    public void getAllQuestionToTakeQuiz(String subjectID) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "select questionID,questionContent,answer1,answer2,answer3,answer4,answerCorrect,createDate,statusID "
+                        + "from Question "
+                        + "where subjectID = ? and statusID = 0 "
+                        + "ORDER BY NEWID()";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, subjectID);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    String questionID = rs.getString("questionID");
+                    String questionContent = rs.getString("questionContent");
+                    String answer1 = rs.getString("answer1");
+                    String answer2 = rs.getString("answer2");
+                    String answer3 = rs.getString("answer3");
+                    String answer4 = rs.getString("answer4");
+                    String answerCorrect = rs.getString("answerCorrect");
+                    String createDate = rs.getString("createDate");
+                    SubjectDAO sdao = new SubjectDAO();
+                    SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
+                    int statusID = rs.getInt("statusID");
+                    QuestionDTO dto = new QuestionDTO(questionID, questionContent, answer1, answer2, answer3, answer4, answerCorrect, createDate, sdto, statusID);
+                    if (this.questionList == null) {
+                        this.questionList = new ArrayList<>();
+                    }
+                    this.questionList.add(dto);
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+
+    public void getAllQuestionByAdmin(String subjectID) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -73,7 +119,7 @@ public class QuestionDAO implements Serializable {
             }
         }
     }
-
+    
     public QuestionDTO getQuestionDTO(String questionID) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
@@ -115,6 +161,37 @@ public class QuestionDAO implements Serializable {
             }
         }
         return dto;
+    }
+    public String getSubjectFromQuestion(String questionID) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String subjectID = "";
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "select subjectID "
+                        + "from Question "
+                        + "where questionID = ?";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, questionID);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    subjectID = rs.getString("subjectID");
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+        return subjectID;
     }
 
     public int getNumberOfQuestion(String subjectID) throws SQLException, NamingException {
@@ -222,18 +299,17 @@ public class QuestionDAO implements Serializable {
         return false;
     }
     
-    public boolean deleteQuestion(String questionID,String statusID) throws SQLException, NamingException {
+    public boolean deleteQuestion(String questionID) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
                 String sql = "Update Question "
-                        + "set statusID = ? "
+                        + "set statusID = 1 "
                         + "where questionID = ?";
                 ps = con.prepareStatement(sql);
-                ps.setString(1, statusID);
-                ps.setString(2, questionID);
+                ps.setString(1, questionID);
                 int row = ps.executeUpdate();
                 if (row > 0) {
                     return true;

@@ -49,7 +49,7 @@ public class TakeQuizServlet extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             String subjectID = request.getParameter("subjectID");
             QuestionDAO dao =new QuestionDAO();
-            dao.getAllQuestion(subjectID);
+            dao.getAllQuestionToTakeQuiz(subjectID);
             List<QuestionDTO> list = dao.getQuestionList();
             request.setAttribute("QUESTION_LIST", list);
             SubjectDAO sdao = new SubjectDAO();
