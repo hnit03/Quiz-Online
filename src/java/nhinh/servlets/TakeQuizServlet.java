@@ -7,8 +7,8 @@ package nhinh.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
@@ -19,16 +19,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import nhinh.registration.RegistrationDAO;
-import nhinh.role.RoleDAO;
-import nhinh.utils.SHA256;
+import nhinh.question.QuestionDAO;
+import nhinh.question.QuestionDTO;
+import nhinh.subject.SubjectDAO;
+import nhinh.subject.SubjectDTO;
 
 /**
  *
  * @author PC
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "TakeQuizServlet", urlPatterns = {"/TakeQuizServlet"})
+public class TakeQuizServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,33 +44,26 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String url = "signin";
+        String url = "quiz";
         try {
             /* TODO output your page here. You may use following sample code. */
-            String email = request.getParameter("txtEmail");
-            String password = request.getParameter("txtPassword");
-            RegistrationDAO dao = new RegistrationDAO();
-            SHA256 sha = new SHA256();
-            String pw = sha.bytesToHex(password);
-            int roleID = dao.checkLogin(email, pw);
-            if (roleID == -1) {
-                request.setAttribute("LOGIN_FAILED", "Invalid userID or password.");
-            } else {
-                RoleDAO rdao = new RoleDAO();
-                HttpSession session = request.getSession();
-                session.setAttribute("ROLE", rdao.getRoleName(roleID));
-                String fullname = dao.getFullname(email);
-                session.setAttribute("FULLNAME", fullname);
-                url = "subject";
-            }
-
+            String subjectID = request.getParameter("subjectID");
+            QuestionDAO dao =new QuestionDAO();
+            dao.getAllQuestion(subjectID);
+            List<QuestionDTO> list = dao.getQuestionList();
+            request.setAttribute("QUESTION_LIST", list);
+            SubjectDAO sdao = new SubjectDAO();
+            SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
+            request.setAttribute("TIME", sdto.getTime());
+            HttpSession session = request.getSession();
+            QuestionDAO qdao = new QuestionDAO();
+            int numberOfQuestion = qdao.getNumberOfQuestion(subjectID);
+            session.setAttribute("NUM_QUESTION", numberOfQuestion);
         } catch (SQLException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TakeQuizServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+            Logger.getLogger(TakeQuizServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
             out.close();

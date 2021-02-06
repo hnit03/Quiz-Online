@@ -19,6 +19,7 @@
             <h1 class="text-center">Register</h1>
             <div class="row">
                 <div class="col-lg-4"></div>
+                <c:set var="error" value="${requestScope.ERROR}"/>
                 <div class="col-lg-4">
                     <form action="registerAcc" method="POST">
                         <div class="mb-3">
@@ -26,6 +27,9 @@
                             <input type="email" class="form-control" 
                                    id="email" placeholder="name@example.com" required
                                    name="txtEmail" value="${param.txtEmail}">
+                            <c:if test="${not empty error.emailIsExist}">
+                                <font color="red">${error.emailIsExist}</font>
+                            </c:if>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password:</label>
@@ -37,6 +41,9 @@
                             <input type="password" class="form-control" 
                                    id="email" placeholder="Password" required
                                    name="txtConfirmPassword" value="${param.txtConfirmPassword}">
+                            <c:if test="${not empty error.comfirmNotMatch}">
+                                <font color="red">${error.comfirmNotMatch}</font>
+                            </c:if>
                         </div>
                         <div class="mb-3">
                             <label for="fullname" class="form-label">Fullname:</label>

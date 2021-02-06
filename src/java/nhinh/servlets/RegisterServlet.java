@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import nhinh.registration.RegistrationDAO;
 import nhinh.registration.RegistrationDTO;
+import nhinh.registration.RegistrationError;
 import nhinh.utils.SHA256;
 
 /**
@@ -43,20 +44,33 @@ public class RegisterServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = "register";
+        int roleID = 1;
+        int status = 1;
         try {
             /* TODO output your page here. You may use following sample code. */
             String email = request.getParameter("txtEmail");
             String password = request.getParameter("txtPassword");
             String confirmPassword = request.getParameter("txtConfirmPassword");
             String fullname = request.getParameter("txtFullname");
-            if (!email.trim().isEmpty() && !password.trim().isEmpty()&& !confirmPassword.trim().isEmpty()
+            RegistrationError errors = new RegistrationError();
+            RegistrationDAO dao = new RegistrationDAO();
+            if (!email.trim().isEmpty() && !password.trim().isEmpty() && !confirmPassword.trim().isEmpty()
                     && !fullname.trim().isEmpty()) {
                 boolean err = false;
-                if (!err) {
+                if (dao.checkEmailDup(email)) {
+                    errors.setEmailIsExist(email + "is existed!!!");
+                    err = true;
+                }
+                if (!confirmPassword.equals(password)) {
+                    errors.setComfirmNotMatch("Confirm must match password");
+                    err = true;
+                }
+                if (err) {
+                    request.setAttribute("ERROR", errors);
+                } else if (!err) {
                     SHA256 sha = new SHA256();
                     String pass = sha.bytesToHex(password);
-                    RegistrationDAO dao = new RegistrationDAO();
-                    RegistrationDTO dto = new RegistrationDTO(email, pass, fullname, 1, 1);
+                    RegistrationDTO dto = new RegistrationDTO(email, pass, fullname, roleID, status);
                     boolean success = dao.createNewAccount(dto);
                     if (success) {
                         url = "signin";
@@ -69,7 +83,7 @@ public class RegisterServlet extends HttpServlet {
             Logger.getLogger(RegisterServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(RegisterServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
+        } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
             out.close();

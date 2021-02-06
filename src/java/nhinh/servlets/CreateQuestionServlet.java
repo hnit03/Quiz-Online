@@ -7,8 +7,8 @@ package nhinh.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
@@ -18,17 +18,17 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import nhinh.registration.RegistrationDAO;
-import nhinh.role.RoleDAO;
-import nhinh.utils.SHA256;
+import nhinh.question.QuestionDAO;
+import nhinh.utils.Utils;
 
 /**
  *
  * @author PC
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "CreateQuestionServlet", urlPatterns = {"/CreateQuestionServlet"})
+public class CreateQuestionServlet extends HttpServlet {
+
+    private final int statusID = 0;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,32 +43,31 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String url = "signin";
+        Date date = new Date();
+        String url = "subject";
         try {
             /* TODO output your page here. You may use following sample code. */
-            String email = request.getParameter("txtEmail");
-            String password = request.getParameter("txtPassword");
-            RegistrationDAO dao = new RegistrationDAO();
-            SHA256 sha = new SHA256();
-            String pw = sha.bytesToHex(password);
-            int roleID = dao.checkLogin(email, pw);
-            if (roleID == -1) {
-                request.setAttribute("LOGIN_FAILED", "Invalid userID or password.");
-            } else {
-                RoleDAO rdao = new RoleDAO();
-                HttpSession session = request.getSession();
-                session.setAttribute("ROLE", rdao.getRoleName(roleID));
-                String fullname = dao.getFullname(email);
-                session.setAttribute("FULLNAME", fullname);
-                url = "subject";
+            String content = request.getParameter("content");
+            String answer1 = request.getParameter("answer1");
+            String answer2 = request.getParameter("answer2");
+            String answer3 = request.getParameter("answer3");
+            String answer4 = request.getParameter("answer4");
+            String answerCorr = request.getParameter("answerCorrect");
+            String subjectID = request.getParameter("subjectID");
+            if (!content.trim().isEmpty() && !answer1.trim().isEmpty() && !answer2.trim().isEmpty()
+                    && !answer3.trim().isEmpty() && !answer4.trim().isEmpty() && !answerCorr.trim().isEmpty()) {
+                QuestionDAO dao = new QuestionDAO();
+                Utils utils = new Utils();
+                String createDate = utils.formatDateToString(date);
+                boolean success = dao.createNewQuestion(content, answer1, answer2, answer3, answer4, answerCorr, createDate, subjectID, statusID);
+                if (success) {
+                    request.setAttribute("CREATE", "Create Successfully!");
+                }
             }
-
         } catch (SQLException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CreateQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CreateQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

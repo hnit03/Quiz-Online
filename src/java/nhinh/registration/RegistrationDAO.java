@@ -13,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.naming.NamingException;
 import nhinh.utils.DBHelper;
-import nhinh.utils.SHA256;
 
 /**
  *
@@ -21,7 +20,7 @@ import nhinh.utils.SHA256;
  */
 public class RegistrationDAO implements Serializable {
 
-    public int checkLogin(String email, String password) throws SQLException, NamingException, NoSuchAlgorithmException {
+    public int checkLogin(String email, String password) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -29,7 +28,7 @@ public class RegistrationDAO implements Serializable {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select statusID,email, roleID "
+                String sql = "select statusID,email,password, roleID "
                         + "from Registration "
                         + "where email = ? and password = ?";
                 ps = con.prepareStatement(sql);
@@ -37,10 +36,11 @@ public class RegistrationDAO implements Serializable {
                 ps.setString(2, password);
                 rs = ps.executeQuery();
                 if (rs.next()) {
-                    int statusID = rs.getInt("statusID");
-                    if (statusID == 1) {
-                        String id = rs.getString("email");
-                        if (email.equals(id)) {
+                    String id = rs.getString("email");
+                    String pass = rs.getString("password");
+                    if (email.equals(id) && password.equals(pass)) {
+                        int statusID = rs.getInt("statusID");
+                        if (statusID == 1) {
                             roleID = rs.getInt("roleID");
                         }
                     }
@@ -58,6 +58,38 @@ public class RegistrationDAO implements Serializable {
             }
         }
         return roleID;
+    }
+
+    public String getFullname(String email) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String fullname = "";
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "select fullname "
+                        + "from Registration "
+                        + "where email = ?";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, email);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    fullname = rs.getString("fullname");
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+        return fullname;
     }
 
     public boolean createNewAccount(RegistrationDTO dto) throws SQLException, NamingException {
@@ -80,6 +112,37 @@ public class RegistrationDAO implements Serializable {
                 }
             }
         } finally {
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+        return false;
+    }
+
+    public boolean checkEmailDup(String email) throws SQLException, NamingException, NoSuchAlgorithmException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "select email "
+                        + "from Registration "
+                        + "where email = ?";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, email);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    return true;
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (ps != null) {
                 ps.close();
             }
