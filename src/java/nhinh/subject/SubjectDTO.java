@@ -16,14 +16,16 @@ public class SubjectDTO implements Serializable{
     private String subjectID;
     private String subjectName;
     private String time;
+    private int statusID;
 
     public SubjectDTO() {
     }
 
-    public SubjectDTO(String subjectID, String subjectName, String time) {
+    public SubjectDTO(String subjectID, String subjectName, String time,int statusID) {
         this.subjectID = subjectID;
         this.subjectName = subjectName;
         this.time = time;
+        this.statusID = statusID;
     }
 
     /**
@@ -66,6 +68,20 @@ public class SubjectDTO implements Serializable{
      */
     public void setTime(String time) {
         this.time = time;
+    }
+
+    /**
+     * @return the statusID
+     */
+    public int getStatusID() {
+        return statusID;
+    }
+
+    /**
+     * @param statusID the statusID to set
+     */
+    public void setStatusID(int statusID) {
+        this.statusID = statusID;
     }
     
     

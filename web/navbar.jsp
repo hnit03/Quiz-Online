@@ -16,12 +16,34 @@
     </head>
     <body>
         <nav class="navbar navbar-expand-lg mb20" style="background: white;">
-            <a class="navbar-brand" href="StartUpServlet">QuizNOW</a>
+            <a class="navbar-brand" href="subject">QuizNOW</a>
             <div class="navbar-nav ml-auto" >
                 <c:set var="role" value="${sessionScope.ROLE}"/>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <c:if test="${role == 'Admin'}">
+                        <li class="nav-item">
+                            <form class="d-flex" action="search">
+                                <input class="form-control me-2" 
+                                       name="searchValue" 
+                                       type="text" 
+                                       placeholder="Search" 
+                                       aria-label="Search"
+                                       value="${param.searchValue}">
+                                <select class="form-select form-control" name="cboStatus" style="width: 50%">
+                                    <option value="">Status</option>
+                                    <option value="0">Active</option>
+                                    <option value="1">Deactive</option>
+                                </select>
+                                <select class="form-select form-control" name="cboCategory" style="width: 50%">
+                                    <option value="Subject">Subject</option>
+                                    <option value="Question" selected>Question</option>
+                                </select>
+                                <input class="btn btn-outline-success" type="submit" value="Search"></input>
+                            </form>
+                        </li>
+                    </c:if>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="StartUpServlet">Home</a>
+                        <a class="nav-link active" aria-current="page" href="subject">Home</a>
                     </li>
 
                     <c:if test="${empty sessionScope.FULLNAME}">

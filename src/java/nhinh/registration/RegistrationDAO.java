@@ -152,4 +152,40 @@ public class RegistrationDAO implements Serializable {
         }
         return false;
     }
+    
+    public RegistrationDTO getRegistrationDTO(String email) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        RegistrationDTO dto = null;
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "select fullname,password,roleID,statusID "
+                        + "from Registration "
+                        + "where email = ?";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, email);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    String fullname = rs.getString("fullname");
+                    String password = rs.getString("password");
+                    int roleID = rs.getInt("roleID");
+                    int statusID = rs.getInt("statusID");
+                    dto = new RegistrationDTO(email, password, fullname, roleID, statusID);
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+        return dto;
+    }
 }

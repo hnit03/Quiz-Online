@@ -66,7 +66,7 @@ public class FilterDispatcher implements Filter {
         ServletContext context = request.getServletContext();
         Map<String, String> indexPage = (Map<String, String>) context.getAttribute("PAGE");
         String uri = req.getRequestURI();
-        String url = "index.html";
+        String url = " ";
         try {
             int lastIndex = uri.lastIndexOf("/");
             String resource = uri.substring(lastIndex+1);

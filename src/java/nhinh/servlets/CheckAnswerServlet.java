@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +23,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import nhinh.history.HistoryDAO;
+import nhinh.historydetails.HistoryDetailsDAO;
+import nhinh.historydetails.HistoryDetailsDTO;
 import nhinh.question.QuestionDAO;
 import nhinh.question.QuestionDTO;
+import nhinh.utils.Utils;
 
 /**
  *
@@ -46,25 +51,51 @@ public class CheckAnswerServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = "result";
+        Date date = new Date();
         try {
             /* TODO output your page here. You may use following sample code. */
+            HttpSession session = request.getSession(false);
+
+            String subjectID = request.getParameter("subjectID");
             String[] questionIDStr = request.getParameterValues("questionID");
             List<String> answer = new ArrayList<>();
             for (String questionID : questionIDStr) {
                 String answerChosen = request.getParameter("answer" + questionID);
                 answer.add(answerChosen);
             }
+            
             QuestionDAO dao = new QuestionDAO();
             List<QuestionDTO> list = new ArrayList<>();
-            Map<QuestionDTO, String> result = new LinkedHashMap<>();
+            Map<QuestionDTO, HistoryDetailsDTO> result = new LinkedHashMap<>();
             for (String questionID : questionIDStr) {
                 QuestionDTO dto = dao.getQuestionDTO(questionID);
                 list.add(dto);
             }
-            String correct = "Incorrect";
-
-            int count = 0;
+            
+            int total = 0;
+            String email = "";
+            
+            if (session != null) {
+                total = (int) session.getAttribute("NUM_QUESTION");
+                email = (String) session.getAttribute("EMAIL");
+            }
+            float totalPoint = 0;
+            
             int numOfCorrect = 0;
+            
+            Utils utils = new Utils();
+            String createDate = utils.formatDateToString(date);
+            HistoryDAO hdao = new HistoryDAO();
+            
+            hdao.insertHistory(email, subjectID, numOfCorrect, totalPoint, createDate);
+            
+            String historyID = hdao.getHistoryID(email, subjectID, createDate);
+
+            HistoryDetailsDAO hddao = new HistoryDetailsDAO();
+            
+            int count = 0;
+            String correct = "Incorrect";
+            
             while (count < answer.size()) {
                 if (answer.get(count) != null) {
                     if (answer.get(count).equals(list.get(count).getAnswerCorrect())) {
@@ -72,16 +103,18 @@ public class CheckAnswerServlet extends HttpServlet {
                         numOfCorrect++;
                     }
                 }
-
-                result.put(list.get(count), correct);
+                hddao.insertHistoryDetails(historyID, questionIDStr[count], answer.get(count), correct);
                 count++;
             }
-            int total = 0;
-            HttpSession session = request.getSession(false);
-            if (session!=null) {
-                total = (int) session.getAttribute("NUM_QUESTION");
+            
+            totalPoint = (float) ((numOfCorrect / (1.0 * total)) * 10);
+            hdao.updateHistory(historyID, numOfCorrect, totalPoint);
+            
+            for (QuestionDTO qdto : list) {
+                HistoryDetailsDTO hddto = hddao.getHistoryDetails(historyID, qdto.getQuestionID());
+                result.put(qdto, hddto);
             }
-            float totalPoint = (float) ((numOfCorrect/(1.0*total)) * 10);
+            
             request.setAttribute("NUM_OF_CORRECT", numOfCorrect);
             request.setAttribute("TOTAL_POINT", totalPoint);
             request.setAttribute("RESULT", result);

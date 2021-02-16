@@ -1,4 +1,4 @@
- =index.html
+ =StartUpServlet
 login=LoginServlet
 register=register.jsp
 registerAcc=RegisterServlet
@@ -20,3 +20,8 @@ update=UpdateQuestionServlet
 get=GetQuestionToUpdateServlet
 delete=DeleteQuestionServlet
 updatePage=update.jsp
+startup=StartUpServlet
+history=HistoryServlet
+historyPage=history.jsp
+searchPage=search.jsp
+search=SearchQuestionServlet

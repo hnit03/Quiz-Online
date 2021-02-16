@@ -23,9 +23,6 @@ public class SHA256 {
         md.update(text.getBytes(StandardCharsets.UTF_8));
         byte[] hash = md.digest();
 
-//        String hex = String.format("%064x", new BigInteger(1, hash));
-//        System.out.println(hex);
-//        return hex.toString();
         StringBuilder hexString = new StringBuilder(2 * hash.length);
         for (int i = 0; i < hash.length; i++) {
             String hex = Integer.toHexString(0xff & hash[i]);
@@ -34,7 +31,6 @@ public class SHA256 {
             }
             hexString.append(hex);
         }
-        System.out.println("hs " + hexString);
         return hexString.toString();
     }
 }

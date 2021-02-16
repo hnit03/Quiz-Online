@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
     </head>
     <body>
+        <jsp:include page="navbar.jsp"/>
         <div class="container mt-5">
             <h1 class="text-center">Login</h1>
             <div class="row">

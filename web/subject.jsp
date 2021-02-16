@@ -25,10 +25,10 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">${dto.subjectName}</h5>
-                                    <c:url var="quiz" value="takeQuiz">
-                                        <c:param name="subjectID" value="${dto.subjectID}"/>
-                                    </c:url>
-                                    <a href="${quiz}" class="card-link">Take Quiz</a>
+                                    <form action="takeQuiz" method="POST">
+                                        <input type="hidden" name="subjectID" value="${dto.subjectID}" />
+                                        <input type="submit" value="Take Quiz" class="btn btn-outline-success"/>
+                                    </form>
                                 </div>
                             </div>
                         </div>

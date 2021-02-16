@@ -28,36 +28,54 @@
                 <div class="col-lg-9">
                     <c:set var="result" value="${requestScope.RESULT}"/>
                     <c:if test="${not empty result}">
-                        <c:forEach var="question" items="${result}">
+                        <c:forEach var="question" items="${result}" varStatus="counter">
                             <div class="card">
                                 <div class="card-body ml-3">
-                                    <h5 class="card-title">${question.key.content}</h5>
+                                    <h5 class="card-title">Question ${counter.count}: ${question.key.content}</h5>
 
-                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault1" disabled>
+                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault1" disabled
+                                           <c:if test="${question.value.answerChosen eq question.key.answer1}">
+                                               checked
+                                           </c:if>
+                                           >
                                     <label class="form-check-label" for="flexRadioDefault1">
                                         ${question.key.answer1}
                                     </label>
                                     <br>
 
-                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault2" disabled>
+                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault2" disabled
+                                           
+                                           <c:if test="${question.value.answerChosen eq question.key.answer2}">
+                                               checked
+                                           </c:if>
+                                           >
                                     <label class="form-check-label" for="flexRadioDefault2">
                                         ${question.key.answer2}
                                     </label>
                                     <br>
 
-                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault3" disabled>
+                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault3" disabled
+                                           <c:if test="${question.value.answerChosen eq question.key.answer3}">
+                                               checked
+                                           </c:if>
+                                           >
                                     <label class="form-check-label" for="flexRadioDefault3">
                                         ${question.key.answer3}
                                     </label>
                                     <br>
-
-                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault4" disabled>
+                                    
+                                    <input class="form-check-input" type="radio" name="answer" id="flexRadioDefault4" disabled
+                                           <c:if test="${question.value.answerChosen eq question.key.answer4}">
+                                               checked
+                                           </c:if>
+                                           >
                                     <label class="form-check-label" for="flexRadioDefault4">
                                         ${question.key.answer4}
                                     </label>
                                 </div>
                                 <div class="alert alert-danger" role="alert">
-                                    ${question.value}
+                                    ${question.value.correct}
+            
                                 </div>
                                 <div class="alert alert-success" role="alert" style="margin-bottom: 0px">
                                     The correct answer: ${question.key.answerCorrect}
@@ -66,6 +84,7 @@
 
                         </c:forEach>
                     </c:if>
+                    
 
                 </div>
             </div>

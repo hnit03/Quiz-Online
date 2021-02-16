@@ -59,6 +59,7 @@ public class TakeQuizServlet extends HttpServlet {
             QuestionDAO qdao = new QuestionDAO();
             int numberOfQuestion = qdao.getNumberOfQuestion(subjectID);
             session.setAttribute("NUM_QUESTION", numberOfQuestion);
+            request.setAttribute("SUBJECTID", subjectID);
         } catch (SQLException ex) {
             Logger.getLogger(TakeQuizServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {

@@ -42,23 +42,24 @@ public class SubjectServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String url = "student";
+        String url = "startup";
         try {
             /* TODO output your page here. You may use following sample code. */
             SubjectDAO dao = new SubjectDAO();
-            dao.getAllSubject();
-            List<SubjectDTO> list = dao.getSubjectList();
-            request.setAttribute("SUBJECT", list);
             HttpSession session = request.getSession(false);
-            String role = "";
             if (session != null) {
                 Object roleObj = session.getAttribute("ROLE");
                 if (roleObj != null) {
-                    role = (String) roleObj;
+                    String role = (String) roleObj;
+                    if (role.equals("Admin")) {
+                        dao.getAllSubject();
+                    }
+                    if (role.equals("Student")) {
+                        dao.getAllSubjectByStudent();
+                    }
+                    List<SubjectDTO> list = dao.getSubjectList();
+                    request.setAttribute("SUBJECT", list);
                 }
-            }
-            if (role.equals("Admin")) {
-                url = "admin";
             }
         } catch (SQLException ex) {
             Logger.getLogger(SubjectServlet.class.getName()).log(Level.SEVERE, null, ex);

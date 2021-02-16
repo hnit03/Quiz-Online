@@ -55,6 +55,21 @@
                                 <input type="text" class="form-control" placeholder="Answer Correct"
                                        name="answerCorrect" value="${dto.answerCorrect}">
                             </div> 
+                            <div class="mb-3">
+                                <label class="form-label">Status:</label>
+                                <select name="cboStatus" class="form-control">
+                                    <option value="0" 
+                                            <c:if test="${dto.statusID == 0}">
+                                                selected
+                                            </c:if>
+                                            >Active</option>
+                                    <option value="1"
+                                            <c:if test="${dto.statusID == 1}">
+                                                selected
+                                            </c:if>
+                                            >Deactive</option>
+                                </select>
+                            </div> 
                             <input type="submit" class="btn btn-danger form-control mb-1" name="btnAction" value="Update"/>
                             <input type="hidden" name="questionID" value="${dto.questionID}" />
                             <button type="button" class="btn btn-warning form-control">Reset</button>

@@ -25,7 +25,7 @@
                         <p id='time'>${time}</p>
                     </div>
                     <div class="col-lg-9">
-                        <form name="exam" action="checkAnswer" method="POST">
+                        <form name="exam" action="checkAnswer" method="get">
                             <c:forEach var="question" items="${listQuestion}" varStatus="counter">
                                 <div class="card">
                                     <div class="card-body ml-3">
@@ -60,6 +60,7 @@
                             <div class="row">
                                 <div class="col-lg-10"></div>
                                 <div class="col-lg-2">
+                                    <input type="hidden" name="subjectID" value="${requestScope.SUBJECTID}" />
                                     <input type="submit" value="Finish" class="btn btn-success" style="width: 100%"/>
                                 </div>
                             </div>

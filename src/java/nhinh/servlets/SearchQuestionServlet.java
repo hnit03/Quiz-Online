@@ -8,9 +8,11 @@ package nhinh.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,13 +20,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import nhinh.question.QuestionDAO;
 import nhinh.question.QuestionDTO;
+import nhinh.subject.SubjectDAO;
+import nhinh.subject.SubjectDTO;
 
 /**
  *
  * @author PC
  */
-@WebServlet(name = "UpdateQuestionServlet", urlPatterns = {"/UpdateQuestionServlet"})
-public class UpdateQuestionServlet extends HttpServlet {
+@WebServlet(name = "SearchQuestionServlet", urlPatterns = {"/SearchQuestionServlet"})
+public class SearchQuestionServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,35 +43,38 @@ public class UpdateQuestionServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String urlRewriting = "";
+        String url = "searchPage";
         try {
             /* TODO output your page here. You may use following sample code. */
-            String questionID = request.getParameter("questionID");
-            String content  = request.getParameter("content");
-            String answer1 = request.getParameter("answer1");
-            String answer2 = request.getParameter("answer2");
-            String answer3 = request.getParameter("answer3");
-            String answer4 = request.getParameter("answer4");
-            String answerCorrect = request.getParameter("answerCorrect");
+            String searchValue = request.getParameter("searchValue");
             String status = request.getParameter("cboStatus");
-            if (!questionID.trim().isEmpty()) {
-                QuestionDAO qdao = new QuestionDAO();
-                QuestionDTO oldDTO = qdao.getQuestionDTO(questionID);
-                int statusID = Integer.parseInt(status);
-                QuestionDTO newDTO = new QuestionDTO(questionID, content, answer1, answer2, answer3, answer4, answerCorrect,
-                        oldDTO.getCreateDate(), oldDTO.getSubjectDTO(), statusID);
-                boolean success = qdao.updateQuestion(newDTO);
-                
-                if (success) {
-                    urlRewriting = "manage?subjectID="+oldDTO.getSubjectDTO().getSubjectID();
+            String category = request.getParameter("cboCategory");
+            int statusID = 0;
+            if (!searchValue.trim().isEmpty() || !status.trim().isEmpty()) {
+                if (status.equals("0") || status.equals("1")) {
+                    statusID = Integer.parseInt(status);
                 }
+                if (category.equals("Subject")) {
+                    SubjectDAO dao = new SubjectDAO();
+                    dao.searchSubject(searchValue, statusID);
+                    List<SubjectDTO> result = dao.getSubjectList();
+                    request.setAttribute("RESULT_SUBJECT", result);
+                }
+                if (category.equals("Question")) {
+                    QuestionDAO dao = new QuestionDAO();
+                    dao.searchQuestion(searchValue, statusID);
+                    List<QuestionDTO> result = dao.getQuestionList();
+                    request.setAttribute("RESULT_QUESTION", result);
+                }
+
             }
         } catch (SQLException ex) {
-            Logger.getLogger(UpdateQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SearchQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
-            Logger.getLogger(UpdateQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            response.sendRedirect(urlRewriting);
+            Logger.getLogger(SearchQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            RequestDispatcher rd = request.getRequestDispatcher(url);
+            rd.forward(request, response);
             out.close();
         }
     }

@@ -119,7 +119,7 @@ public class QuestionDAO implements Serializable {
             }
         }
     }
-    
+
     public QuestionDTO getQuestionDTO(String questionID) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
@@ -162,6 +162,7 @@ public class QuestionDAO implements Serializable {
         }
         return dto;
     }
+
     public String getSubjectFromQuestion(String questionID) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
@@ -204,7 +205,7 @@ public class QuestionDAO implements Serializable {
             if (con != null) {
                 String sql = "select count(questionID) "
                         + "from Question "
-                        + "where subjectID = ?";
+                        + "where subjectID = ? and statusID = 0";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, subjectID);
                 rs = ps.executeQuery();
@@ -261,7 +262,7 @@ public class QuestionDAO implements Serializable {
         }
         return false;
     }
-    
+
     public boolean updateQuestion(QuestionDTO dto) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
@@ -298,7 +299,7 @@ public class QuestionDAO implements Serializable {
         }
         return false;
     }
-    
+
     public boolean deleteQuestion(String questionID) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
@@ -324,5 +325,52 @@ public class QuestionDAO implements Serializable {
             }
         }
         return false;
+    }
+
+    public void searchQuestion(String searchValue, int status) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "select questionID,questionContent,answer1,answer2,answer3,answer4,answerCorrect,createDate,subjectID,statusID "
+                        + "from Question "
+                        + "where questionContent like ? and statusID = ?";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, "%" + searchValue + "%");
+                ps.setInt(2, status );
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    String questionID = rs.getString("questionID");
+                    String questionContent = rs.getString("questionContent");
+                    String answer1 = rs.getString("answer1");
+                    String answer2 = rs.getString("answer2");
+                    String answer3 = rs.getString("answer3");
+                    String answer4 = rs.getString("answer4");
+                    String answerCorrect = rs.getString("answerCorrect");
+                    String createDate = rs.getString("createDate");
+                    String subjectID = rs.getString("subjectID");
+                    SubjectDAO sdao = new SubjectDAO();
+                    SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
+                    int statusID = rs.getInt("statusID");
+                    if (this.questionList == null) {
+                        this.questionList = new ArrayList<>();
+                    }
+                    QuestionDTO dto = new QuestionDTO(questionID, questionContent, answer1, answer2, answer3, answer4, answerCorrect, createDate, sdto, statusID);
+                    this.questionList.add(dto);
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
     }
 }

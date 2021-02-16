@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -57,6 +56,7 @@ public class LoginServlet extends HttpServlet {
             } else {
                 RoleDAO rdao = new RoleDAO();
                 HttpSession session = request.getSession();
+                session.setAttribute("EMAIL", email);
                 session.setAttribute("ROLE", rdao.getRoleName(roleID));
                 String fullname = dao.getFullname(email);
                 session.setAttribute("FULLNAME", fullname);
@@ -70,8 +70,7 @@ public class LoginServlet extends HttpServlet {
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            RequestDispatcher rd = request.getRequestDispatcher(url);
-            rd.forward(request, response);
+            response.sendRedirect(url);
             out.close();
         }
     }

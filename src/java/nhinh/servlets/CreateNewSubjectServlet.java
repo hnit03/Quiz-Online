@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -40,6 +39,7 @@ public class CreateNewSubjectServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = "error";
+        int statusID = 0;
         try {
             /* TODO output your page here. You may use following sample code. */    
             String subjectName = request.getParameter("subjectName");
@@ -51,21 +51,18 @@ public class CreateNewSubjectServlet extends HttpServlet {
             if (!subjectName.trim().isEmpty()&&!minute.trim().isEmpty()) {
                 String time = minute + ":" + second;
                 SubjectDAO sdao = new SubjectDAO();
-                boolean success = sdao.createNewSubject(subjectName, time);
+                boolean success = sdao.createNewSubject(subjectName, time,statusID);
                 if (success) {
                     url = "subject";
-                    request.setAttribute("CREATE_SUBJECT_SUCCESS", "Create Successfully!");
                 }
             }
             
-
         } catch (SQLException ex) {
             Logger.getLogger(CreateNewSubjectServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
             Logger.getLogger(CreateNewSubjectServlet.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
-            RequestDispatcher rd =request.getRequestDispatcher(url);
-            rd.forward(request, response);
+            response.sendRedirect(url);
             out.close();
         }
     }

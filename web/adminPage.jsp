@@ -16,25 +16,25 @@
     </head>
     <body>
         <jsp:include page="navbar.jsp"/>
-        <c:if test="${not empty requestScope.CREATE}">
-            <script>
-                alert(${requestScope.CREATE});
-            </script>
-        </c:if>
         <div class="container">
             <div class="row">
-                <div class="col-lg-3" style="border: 1px solid dimgray">
+                <div class="col-lg-3" >
+                    <div class="row" style="border: 1px solid dimgray">
+                        <form action="createSubject" class="my-2 mx-2">
+                            <h4 class="text-center">Create New Subject</h2>
+                                <label class="form-label">Subject Name</label>
+                                <input type="text" name="subjectName" value="" 
+                                       placeholder="Subject Name" class="form-control mb-2" required/>
+                                <label class="form-label">Time</label>
+                                <div class="d-flex">
+                                    <input type="text" name="minute" value="" placeholder="Minute" class="form-control mb-2" required/>
+                                    <label class="nav-link">-</label>
+                                    <input type="text" name="second" value="" placeholder="Second" class="form-control mb-2" maxlength="2"/>
+                                </div>
+                                <input type="submit" value="Create"  class="form-control btn btn-success"/>
+                        </form>
+                    </div> 
 
-                    <form action="createSubject" class="my-2 mx-2">
-                        <h4 class="text-center">Create New Subject</h2>
-                            <label class="form-label">Subject Name</label>
-                            <input type="text" name="subjectName" value="${param.subjectName}" placeholder="Subject Name" class="form-control mb-2"/>
-                            <label class="form-label">Minute</label>
-                            <input type="text" name="minute" value="${param.minute}" placeholder="Minute" class="form-control mb-2" />
-                            <label class="form-label">Second</label>
-                            <input type="text" name="second" value="${param.second}" placeholder="Second" class="form-control mb-2" />
-                            <input type="submit" value="Create"  class="form-control btn btn-success"/>
-                    </form>
                 </div>
                 <div class="col-lg-9">
                     <div class="row">

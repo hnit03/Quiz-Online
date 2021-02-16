@@ -27,6 +27,43 @@ public class SubjectDAO implements Serializable {
         return subjectList;
     }
 
+    public void getAllSubjectByStudent() throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "select subjectID,subjectName,time,statusID "
+                        + "from Subject "
+                        + "where statusID = 0";
+                ps = con.prepareStatement(sql);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    String subjectID = rs.getString("subjectID");
+                    String subjectName = rs.getString("subjectName");
+                    String time = rs.getString("time");
+                    int statusID = rs.getInt("statusID");
+                    SubjectDTO dto = new SubjectDTO(subjectID, subjectName,time,statusID);
+                    if (this.subjectList == null) {
+                        this.subjectList = new ArrayList<>();
+                    }
+                    this.subjectList.add(dto);
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+    
     public void getAllSubject() throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
@@ -34,15 +71,16 @@ public class SubjectDAO implements Serializable {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select subjectID,subjectName,time "
-                        + "from Subject";
+                String sql = "select subjectID,subjectName,time,statusID "
+                        + "from Subject ";
                 ps = con.prepareStatement(sql);
                 rs = ps.executeQuery();
                 while (rs.next()) {
                     String subjectID = rs.getString("subjectID");
                     String subjectName = rs.getString("subjectName");
                     String time = rs.getString("time");
-                    SubjectDTO dto = new SubjectDTO(subjectID, subjectName,time);
+                    int statusID = rs.getInt("statusID");
+                    SubjectDTO dto = new SubjectDTO(subjectID, subjectName,time,statusID);
                     if (this.subjectList == null) {
                         this.subjectList = new ArrayList<>();
                     }
@@ -70,7 +108,7 @@ public class SubjectDAO implements Serializable {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select subjectID,subjectName,time "
+                String sql = "select subjectID,subjectName,time,statusID "
                         + "from Subject "
                         + "where subjectID = ?";
                 ps = con.prepareStatement(sql);
@@ -80,7 +118,8 @@ public class SubjectDAO implements Serializable {
                     String subjectID = rs.getString("subjectID");
                     String subjectName = rs.getString("subjectName");
                     String time = rs.getString("time");
-                    dto = new SubjectDTO(subjectID, subjectName,time);
+                    int statusID = rs.getInt("statusID");
+                    dto = new SubjectDTO(subjectID, subjectName,time,statusID);
                 }
             }
         } finally {
@@ -97,18 +136,18 @@ public class SubjectDAO implements Serializable {
         return dto;
     }
     
-    public boolean createNewSubject(String subjectName, String time) throws SQLException, NamingException {
+    public boolean createNewSubject(String subjectName, String time,int statusID) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "insert into Subject(subjectID,subjectName,time) "
-                        + "values(NEWID(),?,?)";
+                String sql = "insert into Subject(subjectID,subjectName,time,statusID) "
+                        + "values(NEWID(),?,?,?)";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, subjectName);
                 ps.setString(2, time);
-
+                ps.setInt(3, statusID);
                 int row = ps.executeUpdate();
                 if (row > 0) {
                     return true;
@@ -123,5 +162,44 @@ public class SubjectDAO implements Serializable {
             }
         }
         return false;
+    }
+    
+    public void searchSubject(String searchValue, int status) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "select subjectID,subjectName,time,statusID "
+                        + "from Subject "
+                        + "where subjectName like ? and statusID = ?";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, "%" + searchValue + "%");
+                ps.setInt(2, status );
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    String subjectID = rs.getString("subjectID");
+                    String subjectName = rs.getString("subjectName");
+                    String time = rs.getString("time");
+                    int statusID = rs.getInt("statusID");
+                    if (this.subjectList == null) {
+                        this.subjectList = new ArrayList<>();
+                    }
+                    SubjectDTO dto = new SubjectDTO(subjectID, subjectName, time, statusID);
+                    this.subjectList.add(dto);
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
     }
 }
