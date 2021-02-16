@@ -19,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -66,10 +67,53 @@ public class FilterDispatcher implements Filter {
         ServletContext context = request.getServletContext();
         Map<String, String> indexPage = (Map<String, String>) context.getAttribute("PAGE");
         String uri = req.getRequestURI();
-        String url = " ";
+        String url = "";
         try {
             int lastIndex = uri.lastIndexOf("/");
-            String resource = uri.substring(lastIndex+1);
+            String resource = uri.substring(lastIndex + 1);
+            HttpSession session = req.getSession(false);
+            if (session != null) {
+                String role = (String) session.getAttribute("ROLE");
+                if (role != null) {
+                    if (role.equals("Admin")) {
+                        if (resource.equals("takeQuiz")
+                                || resource.equals("quiz")
+                                || resource.equals("checkAnswer")
+                                || resource.equals("result")
+                                || resource.equals("history")
+                                || resource.equals("historyPage")
+                                || resource.equals("searchHistory")
+                                || resource.equals("searchHistoryPage")
+                                || resource.equals("student")) {
+                            resource = "subject";
+                        }
+                    }
+                    if (role.equals("Student")) {
+                        if (resource.equals("search")
+                                || resource.equals("searchPage")
+                                || resource.equals("updatePage")
+                                || resource.equals("delete")
+                                || resource.equals("get")
+                                || resource.equals("update")
+                                || resource.equals("create")
+                                || resource.equals("createQuestion")
+                                || resource.equals("createSubject")
+                                || resource.equals("manageQuestion")
+                                || resource.equals("manage")
+                                || resource.equals("admin")) {
+                            resource = "subject";
+                        }
+                    }
+                    if (resource.equals("login")
+                            || resource.equals("signin")
+                            || resource.equals("login")
+                            || resource.equals("register")
+                            || resource.equals("registerAcc")) {
+                        resource = "subject";
+                    }
+                }
+
+            }
             url = indexPage.get(resource);
             if (url != null) {
                 RequestDispatcher rd = req.getRequestDispatcher(url);
@@ -81,9 +125,10 @@ public class FilterDispatcher implements Filter {
             t.printStackTrace();
         }
     }
-        /**
-         * Return the filter configuration object for this filter.
-         */
+
+    /**
+     * Return the filter configuration object for this filter.
+     */
     public FilterConfig getFilterConfig() {
         return (this.filterConfig);
     }

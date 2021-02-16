@@ -48,16 +48,18 @@ public class TakeQuizServlet extends HttpServlet {
         try {
             /* TODO output your page here. You may use following sample code. */
             String subjectID = request.getParameter("subjectID");
-            QuestionDAO dao =new QuestionDAO();
-            dao.getAllQuestionToTakeQuiz(subjectID);
-            List<QuestionDTO> list = dao.getQuestionList();
-            request.setAttribute("QUESTION_LIST", list);
+            QuestionDAO qdao =new QuestionDAO();
             SubjectDAO sdao = new SubjectDAO();
             SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
-            request.setAttribute("TIME", sdto.getTime());
-            HttpSession session = request.getSession();
-            QuestionDAO qdao = new QuestionDAO();
+            qdao.getAllQuestionToTakeQuiz(subjectID);
             int numberOfQuestion = qdao.getNumberOfQuestion(subjectID);
+            
+            List<QuestionDTO> list = qdao.getQuestionList();
+            request.setAttribute("QUESTION_LIST", list);
+            request.setAttribute("SUBJECT", sdto);
+            HttpSession session = request.getSession();
+            
+            
             session.setAttribute("NUM_QUESTION", numberOfQuestion);
             request.setAttribute("SUBJECTID", subjectID);
         } catch (SQLException ex) {

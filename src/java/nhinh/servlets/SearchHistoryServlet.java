@@ -46,15 +46,12 @@ public class SearchHistoryServlet extends HttpServlet {
         try {
             /* TODO output your page here. You may use following sample code. */
             String searchValue = request.getParameter("searchValue");
-            System.out.println("s " + searchValue);
             String categoryID = request.getParameter("cboCategory");
-            System.out.println("c " + categoryID);
             if (!searchValue.trim().isEmpty() || !categoryID.trim().isEmpty()) {
                 HistoryDAO dao = new HistoryDAO();
                 HttpSession session = request.getSession(false);
                 if (session != null) {
                     String email = (String) session.getAttribute("EMAIL");
-                    System.out.println("e " + email);
                     dao.searchHistory(searchValue, categoryID, email);
                     List<HistoryDTO> result = dao.getListHistory();
                     request.setAttribute("HISTORY_RESULT", result);

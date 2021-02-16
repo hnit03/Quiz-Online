@@ -18,16 +18,22 @@
         <jsp:include page="navbar.jsp"/>
         <div class="container">
             <c:set var="listQuestion" value="${requestScope.QUESTION_LIST}"/>
-            <c:if test="${not empty listQuestion}">
+            <c:set var="sdto" value="${requestScope.SUBJECT}"/>
+            <c:if test="${not empty listQuestion && not empty sdto}">
                 <div class="row">
                     <div class="col-lg-3">
-                        <c:set var="time" value="${requestScope.TIME}"/>
-                        <p id='time'>${time}</p>
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">${sdto.subjectName}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">${sdto.cdto.categoryName}</h6>
+                                <p class="card-text">Time: <span id="time">${sdto.time}</span></p>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-lg-9">
                         <form name="exam" action="checkAnswer" method="get">
                             <c:forEach var="question" items="${listQuestion}" varStatus="counter">
-                                <div class="card">
+                                <div class="card mb-3">
                                     <div class="card-body ml-3">
                                         <h5 class="card-title">Question ${counter.count}: ${question.content}</h5>
                                         <input class="form-check-input" type="radio" name="answer${question.questionID}" id="flexRadioDefault1" value="${question.answer1}">
@@ -56,15 +62,24 @@
                                 <input type="hidden" name="questionID" value="${question.questionID}" />
 
                             </c:forEach>
-                                <br>
+                            <br>
                             <div class="row">
                                 <div class="col-lg-10"></div>
                                 <div class="col-lg-2">
                                     <input type="hidden" name="subjectID" value="${requestScope.SUBJECTID}" />
-                                    <input type="submit" value="Finish" class="btn btn-success" style="width: 100%"/>
+                                    <input type="submit" value="Finish" class="btn btn-success mb-3" style="width: 100%"/>
                                 </div>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </c:if>
+            <c:if test="${empty listQuestion && not empty sdto}">
+                <div class="text-center">
+                    <div class="">
+                        <h5 class="">${sdto.subjectName}</h5>
+                        <h6 class="mb-2 text-muted">${sdto.cdto.categoryName}</h6>
+                        <a href="subject" class="card-link">Back To Home Page</a>
                     </div>
                 </div>
             </c:if>

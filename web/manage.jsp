@@ -15,20 +15,15 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
     </head>
     <body>
-        <c:if test="${not empty requestScope.CREATE_SUBJECT_SUCCESS}">
-            <script>
-                alert(${requestScope.CREATE_SUBJECT_SUCCESS});
-            </script>
-        </c:if>
         <jsp:include page="navbar.jsp"/>
         <div class="container">
-            <div class="row mb-2">
-                <div class="col-lg-12">
-                    <a class="btn btn-primary" href="createQuestion"><i class="fas fa-plus"></i> Create</a>
-                </div>
-            </div>
             <c:set var="questionList" value="${requestScope.LIST_QUESTION}"/>
             <c:if test="${not empty questionList}">
+                <div class="row mb-2">
+                    <div class="col-lg-12">
+                        <a class="btn btn-primary" href="createQuestion"><i class="fas fa-plus"></i> Create New Question</a>
+                    </div>
+                </div>
                 <c:forEach var="dto" items="${questionList}" varStatus="counter">
                     <div class="row mb-2">
                         <div class="col-lg-12">
@@ -65,6 +60,12 @@
                         </div>
                     </div>
                 </c:forEach>
+            </c:if>
+            <c:if test="${empty questionList}">
+                <div class="text-center">
+                    <h2>No question with this subject</h2>
+                    <p>Please create new question <a href="createQuestion">Create</a></p>
+                </div>
             </c:if>
         </div>
     </body>

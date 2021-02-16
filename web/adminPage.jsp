@@ -19,7 +19,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-3" >
-                    <div class="row" style="border: 1px solid dimgray">
+                    <div class="row card" style="border: 1px solid dimgray">
                         <form action="createSubject" class="my-2 mx-2">
                             <h4 class="text-center">Create New Subject</h2>
                                 <label class="form-label">Subject Name</label>
@@ -31,7 +31,21 @@
                                     <label class="nav-link">-</label>
                                     <input type="text" name="second" value="" placeholder="Second" class="form-control mb-2" maxlength="2"/>
                                 </div>
-                                <input type="submit" value="Create"  class="form-control btn btn-success"/>
+                                <label class="form-label">Category</label>
+                                <c:set var="category" value="${applicationScope.CATEGORY}"/>
+                                <select class="form-select form-control" name="cboCategory">
+                                    <c:if test="${not empty category}">
+                                        <c:forEach var="cdto" items="${category}" >
+                                            <option value="${cdto.categoryID}"
+                                                    <c:if test="${cdto.categoryID eq param.cboCategory}">
+                                                        selected
+                                                    </c:if>
+                                                    >${cdto.categoryName}</option>
+                                        </c:forEach>
+                                    </c:if>
+                                </select>
+
+                                <input type="submit" value="Create"  class="form-control btn btn-success mt-3"/>
                         </form>
                     </div> 
 

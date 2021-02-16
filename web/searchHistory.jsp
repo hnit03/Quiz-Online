@@ -18,41 +18,43 @@
         <jsp:include page="navbar.jsp"/>
         <div class="container">
             <c:set var="listHisory" value="${requestScope.HISTORY_RESULT}"/>
-            <c:if test="${not empty listHisory}">
-                <table class="table">
-                    <thead>
-                        <tr>
-                    <form action="searchHistory">
-                        <th colspan="2">
-                            <input type="text" name="searchValue" value="${param.searchValue}" class="form-control"/>
-                        </th>
-                        <th>
-                            <select class="form-select form-control" name="cboCategory">
-                                <c:set var="category" value="${applicationScope.CATEGORY}"/>
-                                <c:if test="${not empty category}">
-                                    <option value="">Category</option>
-                                    <c:forEach var="dto" items="${category}">
-                                        <option value="${dto.categoryID}">${dto.categoryName}</option>
-                                    </c:forEach>
-                                </c:if>
-                            </select>
-                        </th>
-                        <th>
-                            <input type="submit" value="Search" class="btn btn-success"/>
-                        </th>
-                    </form>
-                    </tr>
+
+            <table class="table">
+                <thead>
                     <tr>
-                        <th scope="col">Subject Name</th>
-                        <th scope="col">Number Of Correct Answer</th>
-                        <th scope="col">Total Point</th>
-                        <th scope="col">Create Date</th>
-                    </tr>
-
-
-
-                    </thead>
-                    <tbody>
+                        <form action="searchHistory">
+                            <th colspan="2" style="width: 654px;">
+                                <input type="text" name="searchValue" value="${param.searchValue}" class="form-control"/>
+                            </th>
+                            <th style="width: 249px;">
+                                <select class="form-select form-control" name="cboCategory">
+                                    <c:set var="category" value="${applicationScope.CATEGORY}"/>
+                                    <c:if test="${not empty category}">
+                                        <option value="">Category</option>
+                                        <c:forEach var="dto" items="${category}">
+                                            <option value="${dto.categoryID}"
+                                                    <c:if test="${dto.categoryID eq param.cboCategory}">
+                                                        selected
+                                                    </c:if>
+                                                    >${dto.categoryName}</option>
+                                        </c:forEach>
+                                    </c:if>
+                                </select>
+                            </th>
+                            <th>
+                                <input type="submit" value="Search" class="btn btn-success form-control"/>
+                            </th>
+                        </form>
+                </tr>
+                <tr>
+                    <th scope="col">Subject Name</th>
+                    <th scope="col">Number Of Correct Answer</th>
+                    <th scope="col">Total Point</th>
+                    <th scope="col">Create Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <c:if test="${not empty listHisory}">
                         <c:forEach var="dto" items="${listHisory}">
                             <tr>
                                 <th>${dto.sdto.subjectName}</th>
@@ -61,10 +63,14 @@
                                 <td>${dto.createDate}</td>
                             </tr>
                         </c:forEach>
-                    </tbody>
-                </table>
-
-            </c:if>
+                    </c:if>
+                    <c:if test="${empty listHisory}">
+                        <tr class="text-center">
+                            <th colspan="4" style="font-size:  36px;">Not found</th>
+                        </tr>
+                    </c:if>
+                </tbody>
+            </table>
         </div>
     </body>
 </html>
