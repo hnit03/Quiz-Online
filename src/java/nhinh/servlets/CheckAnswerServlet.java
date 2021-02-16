@@ -84,7 +84,7 @@ public class CheckAnswerServlet extends HttpServlet {
             int numOfCorrect = 0;
             
             Utils utils = new Utils();
-            String createDate = utils.formatDateToString(date);
+            String createDate = utils.formatDateTimeToString(date);
             HistoryDAO hdao = new HistoryDAO();
             
             hdao.insertHistory(email, subjectID, numOfCorrect, totalPoint, createDate);

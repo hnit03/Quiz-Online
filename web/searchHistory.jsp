@@ -1,6 +1,6 @@
 <%-- 
-    Document   : history
-    Created on : Feb 10, 2021, 9:03:49 PM
+    Document   : searchHistory
+    Created on : Feb 16, 2021, 3:01:18 PM
     Author     : PC
 --%>
 
@@ -17,7 +17,7 @@
     <body>
         <jsp:include page="navbar.jsp"/>
         <div class="container">
-            <c:set var="listHisory" value="${requestScope.HISTORY}"/>
+            <c:set var="listHisory" value="${requestScope.HISTORY_RESULT}"/>
             <c:if test="${not empty listHisory}">
                 <table class="table">
                     <thead>

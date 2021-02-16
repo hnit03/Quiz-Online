@@ -26,8 +26,8 @@ import nhinh.history.HistoryDTO;
  *
  * @author PC
  */
-@WebServlet(name = "HistoryServlet", urlPatterns = {"/HistoryServlet"})
-public class HistoryServlet extends HttpServlet {
+@WebServlet(name = "SearchHistoryServlet", urlPatterns = {"/SearchHistoryServlet"})
+public class SearchHistoryServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,24 +42,30 @@ public class HistoryServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String url = "historyPage";
+        String url = "searchHistoryPage";
         try {
             /* TODO output your page here. You may use following sample code. */
-            HttpSession session = request.getSession(false);
-            if (session!=null) {
-                String email = (String) session.getAttribute("EMAIL");
-                if (email!=null) {
-                    HistoryDAO hdao = new HistoryDAO();
-                    hdao.getListOfHistory(email);
-                    List<HistoryDTO> list = hdao.getListHistory();
-                    request.setAttribute("HISTORY", list);
+            String searchValue = request.getParameter("searchValue");
+            System.out.println("s " + searchValue);
+            String categoryID = request.getParameter("cboCategory");
+            System.out.println("c " + categoryID);
+            if (!searchValue.trim().isEmpty() || !categoryID.trim().isEmpty()) {
+                HistoryDAO dao = new HistoryDAO();
+                HttpSession session = request.getSession(false);
+                if (session != null) {
+                    String email = (String) session.getAttribute("EMAIL");
+                    System.out.println("e " + email);
+                    dao.searchHistory(searchValue, categoryID, email);
+                    List<HistoryDTO> result = dao.getListHistory();
+                    request.setAttribute("HISTORY_RESULT", result);
                 }
+
             }
         } catch (SQLException ex) {
-            Logger.getLogger(HistoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SearchHistoryServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {
-            Logger.getLogger(HistoryServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
+            Logger.getLogger(SearchHistoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
             out.close();

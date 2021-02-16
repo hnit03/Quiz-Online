@@ -119,10 +119,12 @@ public class HistoryDAO implements Serializable {
     }
 
     private List<HistoryDTO> listHistory;
-    public List<HistoryDTO> getListHistory(){
+
+    public List<HistoryDTO> getListHistory() {
         return listHistory;
     }
-    public void getListOfHistory(String email, String subjectID, String createDate) throws SQLException, NamingException {
+
+    public void getListOfHistory(String email) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -131,23 +133,73 @@ public class HistoryDAO implements Serializable {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select historyID,numOfCorrect, total "
+                String sql = "select historyID,subjectID,numOfCorrect, total,createDate "
                         + "from History "
-                        + "where email like ? and subjectId like ? and createDate like ?";
+                        + "where email like ?";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, "%" + email + "%");
-                ps.setString(2, "%" + subjectID + "%");
-                ps.setString(3, "%" + createDate + "%");
                 rs = ps.executeQuery();
                 while (rs.next()) {
                     String historyID = rs.getString("historyID");
                     int numOfCorrect = rs.getInt("numOfCorrect");
                     float total = rs.getFloat("total");
-                    
+                    String subjectID = rs.getString("subjectID");
+                    String createDate = rs.getString("createDate");
                     RegistrationDTO rdto = rdao.getRegistrationDTO(email);
-                    
+
                     SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
-                    
+
+                    HistoryDTO dto = new HistoryDTO(historyID, rdto, sdto, numOfCorrect, total, createDate);
+                    if (this.listHistory == null) {
+                        this.listHistory = new ArrayList<>();
+                    }
+                    this.listHistory.add(dto);
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+    }
+
+    public void searchHistory(String searchValue, String categoryID, String email) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        RegistrationDAO rdao = new RegistrationDAO();
+        SubjectDAO sdao = new SubjectDAO();
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "select historyID,subjectID,numOfCorrect, total,createDate "
+                        + "from History "
+                        + "where email = ? and subjectID in "
+                        + "(select subjectID "
+                        + "from Subject "
+                        + "where subjectName like ? and statusID = 0 and categoryID like ?) ";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, email);
+                ps.setString(2, "%" + searchValue + "%");
+                ps.setString(3, "%" + categoryID + "%");
+
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    String historyID = rs.getString("historyID");
+                    int numOfCorrect = rs.getInt("numOfCorrect");
+                    float total = rs.getFloat("total");
+                    String subjectID = rs.getString("subjectID");
+                    String createDate = rs.getString("createDate");
+                    RegistrationDTO rdto = rdao.getRegistrationDTO(email);
+
+                    SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
+
                     HistoryDTO dto = new HistoryDTO(historyID, rdto, sdto, numOfCorrect, total, createDate);
                     if (this.listHistory == null) {
                         this.listHistory = new ArrayList<>();

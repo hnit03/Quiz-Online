@@ -14,6 +14,10 @@
         <description>ServletContextListener</description>
         <listener-class>nhinh.listener.ServletContextListener</listener-class>
     </listener>
+    <listener>
+        <description>ServletContextListener</description>
+        <listener-class>nhinh.listener.CategoryListener</listener-class>
+    </listener>
     <session-config>
         <session-timeout>
             30

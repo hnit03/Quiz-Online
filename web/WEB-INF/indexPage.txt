@@ -25,3 +25,5 @@ history=HistoryServlet
 historyPage=history.jsp
 searchPage=search.jsp
 search=SearchQuestionServlet
+searchHistory=SearchHistoryServlet
+searchHistoryPage=searchHistory.jsp
