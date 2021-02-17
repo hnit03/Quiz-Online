@@ -21,7 +21,12 @@
             <c:if test="${not empty questionList}">
                 <div class="row mb-2">
                     <div class="col-lg-12">
-                        <a class="btn btn-primary" href="createQuestion"><i class="fas fa-plus"></i> Create New Question</a>
+                        <c:url var="create" value="getSubject">
+                            <c:param name="subjectID" value="${requestScope.SUBJECTID}"/>
+                        </c:url>
+                        <a class="btn btn-primary" href="${create}">
+                            <i class="fas fa-plus"></i> Create New Question
+                        </a>
                     </div>
                 </div>
                 <c:forEach var="dto" items="${questionList}" varStatus="counter">
@@ -63,8 +68,13 @@
             </c:if>
             <c:if test="${empty questionList}">
                 <div class="text-center">
+                    
+                    <c:url var="create" value="getSubject">
+                        <c:param name="subjectID" value="${requestScope.SUBJECTID}"/>
+                    </c:url>
+                    
                     <h2>No question with this subject</h2>
-                    <p>Please create new question <a href="createQuestion">Create</a></p>
+                    <p>Please create new question <a href="${create}">Create</a></p>
                 </div>
             </c:if>
         </div>

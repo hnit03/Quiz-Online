@@ -31,12 +31,28 @@
                                        value="${param.searchValue}">
                                 <select class="form-select form-control" name="cboStatus" style="width: 50%">
                                     <option value="">Status</option>
-                                    <option value="0">Active</option>
-                                    <option value="1">Deactive</option>
+                                    <option value="0"
+                                            <c:if test="${param.cboStatus eq '0'}">
+                                                selected
+                                            </c:if>
+                                            >Active</option>
+                                    <option value="1"
+                                            <c:if test="${param.cboStatus eq '1'}">
+                                                selected
+                                            </c:if>
+                                            >Deactive</option>
                                 </select>
                                 <select class="form-select form-control" name="cboCategory" style="width: 50%">
-                                    <option value="Subject">Subject</option>
-                                    <option value="Question" selected>Question</option>
+                                    <option value="Subject"
+                                            <c:if test="${param.cboCategory eq 'Subject'}">
+                                                selected
+                                            </c:if>
+                                            >Subject</option>
+                                    <option value="Question" 
+                                            <c:if test="${param.cboCategory eq 'Question'}">
+                                                selected
+                                            </c:if>
+                                                >Question</option>
                                 </select>
                                 <input class="btn btn-outline-success" type="submit" value="Search"></input>
                             </form>

@@ -58,9 +58,7 @@
                 </c:forEach>
                 <nav aria-label="Page navigation example">
                     <c:set var="pageNo" value="${requestScope.PAGENO}"/>  
-                    <c:out value="${pageNo}"/>
                     <c:set var="pageMax" value="${requestScope.PAGEMAX_QUESTION}"/>
-                    <c:out value="${pageMax}"/>
                     <c:if test="${pageMax > 1}">
                         <form action="search">
                             <ul class="pagination justify-content-end">

@@ -55,10 +55,11 @@
                         <c:set var="subjectList" value="${requestScope.SUBJECT}"/>
                         <c:if test="${not empty subjectList}">
                             <c:forEach var="dto" items="${subjectList}">
-                                <div class="col-lg-4">
+                                <div class="col-lg-4 mb-3">
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="card-title">${dto.subjectName}</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">${dto.cdto.categoryName}</h6>
                                             <c:url var="manage" value="manage">
                                                 <c:param name="subjectID" value="${dto.subjectID}"/>
                                             </c:url>

@@ -73,7 +73,8 @@ public class FilterDispatcher implements Filter {
                                     || resource.equals("historyPage")
                                     || resource.equals("searchHistory")
                                     || resource.equals("searchHistoryPage")
-                                    || resource.equals("student")) {
+                                    || resource.equals("student")
+                                    ) {
                                 resource = "subject";
                             }
                         }
@@ -89,7 +90,8 @@ public class FilterDispatcher implements Filter {
                                     || resource.equals("createSubject")
                                     || resource.equals("manageQuestion")
                                     || resource.equals("manage")
-                                    || resource.equals("admin")) {
+                                    || resource.equals("admin")
+                                    || resource.equals("getSubject")) {
                                 resource = "subject";
                             }
                         }

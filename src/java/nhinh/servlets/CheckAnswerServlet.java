@@ -56,51 +56,53 @@ public class CheckAnswerServlet extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             HttpSession session = request.getSession(false);
             if (session != null) {
-
-                String subjectID = request.getParameter("subjectID");
-                String[] questionIDStr = request.getParameterValues("questionID");
-                List<String> answer = new ArrayList<>();
-                for (String questionID : questionIDStr) {
-                    String answerChosen = request.getParameter("answer" + questionID);
-                    answer.add(answerChosen);
-                }
-
-                QuestionDAO dao = new QuestionDAO();
-                List<QuestionDTO> list = new ArrayList<>();
-                for (String questionID : questionIDStr) {
-                    QuestionDTO dto = dao.getQuestionDTO(questionID);
-                    list.add(dto);
-                }
-
-                int total = 0;
-                String email = "";
-
-                total = (int) session.getAttribute("NUM_QUESTION");
-                email = (String) session.getAttribute("EMAIL");
-
-                float totalPoint = 0;
-
-                int numOfCorrect = 0;
-
-                Utils utils = new Utils();
-                String createDate = utils.formatDateTimeToString(date);
-                HistoryDAO hdao = new HistoryDAO();
-
-                int count = 0;
-
-                while (count < answer.size()) {
-                    if (answer.get(count).equals(list.get(count).getAnswerCorrect())) {
-                        numOfCorrect++;
+                Object totalObj = session.getAttribute("NUM_QUESTION");
+                if (totalObj != null) {
+                    int totalQuestion = (int) totalObj;
+                    String subjectID = request.getParameter("subjectID");
+                    String[] questionIDStr = request.getParameterValues("questionID");
+                    List<String> answer = new ArrayList<>();
+                    for (String questionID : questionIDStr) {
+                        String answerChosen = request.getParameter("answer" + questionID);
+                        answer.add(answerChosen);
                     }
-                    count++;
+
+                    QuestionDAO dao = new QuestionDAO();
+                    List<QuestionDTO> list = new ArrayList<>();
+                    for (String questionID : questionIDStr) {
+                        QuestionDTO dto = dao.getQuestionDTO(questionID);
+                        list.add(dto);
+                    }
+
+                    String email = "";
+
+                    email = (String) session.getAttribute("EMAIL");
+
+                    float totalPoint = 0;
+
+                    int numOfCorrect = 0;
+
+                    Utils utils = new Utils();
+                    String createDate = utils.formatDateTimeToString(date);
+                    HistoryDAO hdao = new HistoryDAO();
+
+                    int count = 0;
+
+                    while (count < answer.size()) {
+                        if (answer.get(count).equals(list.get(count).getAnswerCorrect())) {
+                            numOfCorrect++;
+                        }
+                        count++;
+                    }
+                    session.removeAttribute("NUM_QUESTION");
+                    totalPoint = (float) ((numOfCorrect / (1.0 * totalQuestion)) * 10);
+                    hdao.insertHistory(email, subjectID, numOfCorrect, totalPoint, createDate);
+                    String historyID = hdao.getHistoryID(email, subjectID, createDate);
+                    HistoryDTO dto = hdao.getHistoryDTO(historyID);
+                    request.setAttribute("NUM_QUESTION", totalQuestion);
+                    request.setAttribute("RESULT", dto);
                 }
-                session.removeAttribute("NUM_QUESTION");
-                totalPoint = (float) ((numOfCorrect / (1.0 * total)) * 10);
-                hdao.insertHistory(email, subjectID, numOfCorrect, totalPoint, createDate);
-                String historyID = hdao.getHistoryID(email, subjectID, createDate);
-                HistoryDTO dto = hdao.getHistoryDTO(historyID);
-                request.setAttribute("NUM_QUESTION", total);
-                request.setAttribute("RESULT", dto);
+
             }
         } catch (SQLException ex) {
             log.error("CheckAnswer_SQL:" + ex.getMessage());

@@ -27,3 +27,4 @@ historyPage=history.jsp
 searchHistory=SearchHistoryServlet
 searchHistoryPage=searchHistory.jsp
 student=subject.jsp
+getSubject=GetSubjectToCreateQuestionServlet
