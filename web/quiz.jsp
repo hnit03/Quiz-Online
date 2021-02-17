@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="col-lg-9">
-                        <form name="exam" action="checkAnswer" method="get">
+                        <form name="exam" action="checkAnswer" method="post">
                             <c:forEach var="question" items="${listQuestion}" varStatus="counter">
                                 <div class="card mb-3">
                                     <div class="card-body ml-3">

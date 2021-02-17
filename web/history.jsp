@@ -65,6 +65,9 @@
                 </table>
 
             </c:if>
+            <c:if test="${empty listHisory}">
+                <h2 class="text-center"> No history</h2>
+            </c:if>
         </div>
     </body>
 </html>

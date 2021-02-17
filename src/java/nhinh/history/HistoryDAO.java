@@ -55,34 +55,6 @@ public class HistoryDAO implements Serializable {
         return false;
     }
 
-    public boolean updateHistory(String historyID, int numOfCorrect, float total) throws SQLException, NamingException {
-        Connection con = null;
-        PreparedStatement ps = null;
-        try {
-            con = DBHelper.makeConnection();
-            if (con != null) {
-                String sql = "update History "
-                        + "set numOfCorrect = ?, total = ? "
-                        + "where historyID = ?";
-                ps = con.prepareStatement(sql);
-                ps.setInt(1, numOfCorrect);
-                ps.setFloat(2, total);
-                ps.setString(3, historyID);
-                int success = ps.executeUpdate();
-                if (success == 1) {
-                    return true;
-                }
-            }
-        } finally {
-            if (ps != null) {
-                ps.close();
-            }
-            if (con != null) {
-                con.close();
-            }
-        }
-        return false;
-    }
 
     public String getHistoryID(String email, String subjectID, String createDate) throws SQLException, NamingException {
         Connection con = null;
@@ -169,6 +141,50 @@ public class HistoryDAO implements Serializable {
         }
     }
 
+    public HistoryDTO getHistoryDTO(String historyID) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        HistoryDTO dto = null;
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "select email,subjectID,numOfCorrect, total,createDate "
+                        + "from History "
+                        + "where historyID = ?";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, historyID);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    String email = rs.getString("email");
+                    RegistrationDAO rdao = new RegistrationDAO();
+                    RegistrationDTO rdto = rdao.getRegistrationDTO(email);
+                    
+                    String subjectID = rs.getString("subjectID");
+                    SubjectDAO sdao = new SubjectDAO();
+                    SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
+                    
+                    int numOfCorrect = rs.getInt("numOfCorrect");
+                    float total = rs.getFloat("total");
+                    String createDate = rs.getString("createDate");
+                    dto = new HistoryDTO(historyID, rdto, sdto, numOfCorrect, total, createDate);
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+        return dto;
+    }
+    
+    
     public void searchHistory(String searchValue, String categoryID, String email) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
