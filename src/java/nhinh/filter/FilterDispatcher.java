@@ -20,6 +20,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -28,7 +29,7 @@ import javax.servlet.http.HttpSession;
 public class FilterDispatcher implements Filter {
 
     private static final boolean debug = true;
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(FilterDispatcher.class.getName());
     // The filter configuration object we are associated with.  If
     // this value is null, this filter instance is not currently
     // configured. 
@@ -54,6 +55,7 @@ public class FilterDispatcher implements Filter {
         Map<String, String> indexPage = (Map<String, String>) context.getAttribute("PAGE");
         String uri = req.getRequestURI();
         String url = "";
+        BasicConfigurator.configure();
         try {
             int lastIndex = uri.lastIndexOf("/");
             String resource = uri.substring(lastIndex + 1);
@@ -110,7 +112,7 @@ public class FilterDispatcher implements Filter {
                 chain.doFilter(request, response);
             }
         } catch (Throwable t) {
-            t.printStackTrace();
+            log.error("Filter_Throwable:" + t.getMessage());
         }
     }
 

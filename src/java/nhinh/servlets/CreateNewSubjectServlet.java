@@ -8,8 +8,6 @@ package nhinh.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import nhinh.subject.SubjectDAO;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -24,7 +23,7 @@ import nhinh.subject.SubjectDAO;
  */
 @WebServlet(name = "CreateNewSubjectServlet", urlPatterns = {"/CreateNewSubjectServlet"})
 public class CreateNewSubjectServlet extends HttpServlet {
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CreateNewSubjectServlet.class.getName());
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -40,6 +39,7 @@ public class CreateNewSubjectServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         String url = "error";
         int statusID = 0;
+        BasicConfigurator.configure();
         try {
             /* TODO output your page here. You may use following sample code. */    
             String subjectName = request.getParameter("subjectName");
@@ -59,9 +59,9 @@ public class CreateNewSubjectServlet extends HttpServlet {
             }
             
         } catch (SQLException ex) {
-            Logger.getLogger(CreateNewSubjectServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("CreateNewSubject_SQL:"+ex.getMessage());
         } catch (NamingException ex) {
-            Logger.getLogger(CreateNewSubjectServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("CreateNewSubject_Naming:"+ex.getMessage());
         }finally{
             response.sendRedirect(url);
             out.close();

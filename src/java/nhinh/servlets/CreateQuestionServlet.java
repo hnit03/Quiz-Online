@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import nhinh.question.QuestionDAO;
 import nhinh.utils.Utils;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -27,9 +26,9 @@ import nhinh.utils.Utils;
  */
 @WebServlet(name = "CreateQuestionServlet", urlPatterns = {"/CreateQuestionServlet"})
 public class CreateQuestionServlet extends HttpServlet {
-
+    
     private final int statusID = 0;
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CreateQuestionServlet.class.getName());
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -45,6 +44,7 @@ public class CreateQuestionServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         Date date = new Date();
         String url = "subject";
+        BasicConfigurator.configure();
         try {
             /* TODO output your page here. You may use following sample code. */
             String content = request.getParameter("content");
@@ -65,9 +65,9 @@ public class CreateQuestionServlet extends HttpServlet {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(CreateQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("CreateQuestion_SQL:"+ex.getMessage());
         } catch (NamingException ex) {
-            Logger.getLogger(CreateQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("CreateQuestion_Naming:"+ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

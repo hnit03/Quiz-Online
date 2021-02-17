@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -22,6 +20,7 @@ import nhinh.question.QuestionDAO;
 import nhinh.question.QuestionDTO;
 import nhinh.subject.SubjectDAO;
 import nhinh.subject.SubjectDTO;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -29,7 +28,7 @@ import nhinh.subject.SubjectDTO;
  */
 @WebServlet(name = "SearchQuestionServlet", urlPatterns = {"/SearchQuestionServlet"})
 public class SearchQuestionServlet extends HttpServlet {
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SearchQuestionServlet.class.getName());
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -44,6 +43,7 @@ public class SearchQuestionServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = "searchPage";
+        BasicConfigurator.configure();
         try {
             /* TODO output your page here. You may use following sample code. */
             String searchValue = request.getParameter("searchValue");
@@ -91,9 +91,9 @@ public class SearchQuestionServlet extends HttpServlet {
 
             }
         } catch (SQLException ex) {
-            Logger.getLogger(SearchQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("SearchQuestionServlet_SQL:"+ex.getMessage());
         } catch (NamingException ex) {
-            Logger.getLogger(SearchQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("SearchQuestionServlet_Naming:"+ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

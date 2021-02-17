@@ -8,8 +8,6 @@ package nhinh.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import nhinh.question.QuestionDAO;
 import nhinh.question.QuestionDTO;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -25,7 +24,7 @@ import nhinh.question.QuestionDTO;
  */
 @WebServlet(name = "UpdateQuestionServlet", urlPatterns = {"/UpdateQuestionServlet"})
 public class UpdateQuestionServlet extends HttpServlet {
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpdateQuestionServlet.class.getName());
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -40,6 +39,7 @@ public class UpdateQuestionServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String urlRewriting = "";
+        BasicConfigurator.configure();
         try {
             /* TODO output your page here. You may use following sample code. */
             String questionID = request.getParameter("questionID");
@@ -63,9 +63,9 @@ public class UpdateQuestionServlet extends HttpServlet {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(UpdateQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("UpdateQuestionServlet_SQL:"+ex.getMessage());
         } catch (NamingException ex) {
-            Logger.getLogger(UpdateQuestionServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("UpdateQuestionServlet_Naming:"+ex.getMessage());
         }finally{
             response.sendRedirect(urlRewriting);
             out.close();

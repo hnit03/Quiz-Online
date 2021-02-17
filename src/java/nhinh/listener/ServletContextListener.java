@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+import org.apache.log4j.BasicConfigurator;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -22,7 +23,7 @@ import javax.servlet.ServletContextEvent;
  * @author PC
  */
 public class ServletContextListener implements javax.servlet.ServletContextListener {
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ServletContextListener.class.getName());
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         String filename = "indexPage.txt";
@@ -31,6 +32,7 @@ public class ServletContextListener implements javax.servlet.ServletContextListe
         String path = context.getRealPath("/");
         File f = new File(path + "WEB-INF\\" + filename);
         FileReader fr;
+        BasicConfigurator.configure();
         try {
             fr = new FileReader(f);
             BufferedReader br = new BufferedReader(fr);
@@ -45,7 +47,9 @@ public class ServletContextListener implements javax.servlet.ServletContextListe
             }
 
         } catch (FileNotFoundException ex) {
+            log.error("ServletContextListener_FileNotFound:"+ex.getMessage());
         } catch (IOException ex) {
+            log.error("ServletContextListener_IOException:"+ex.getMessage());
         }
     }
 

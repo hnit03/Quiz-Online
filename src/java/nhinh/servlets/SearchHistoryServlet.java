@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -21,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import nhinh.history.HistoryDAO;
 import nhinh.history.HistoryDTO;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -28,7 +27,7 @@ import nhinh.history.HistoryDTO;
  */
 @WebServlet(name = "SearchHistoryServlet", urlPatterns = {"/SearchHistoryServlet"})
 public class SearchHistoryServlet extends HttpServlet {
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SearchHistoryServlet.class.getName());
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -43,6 +42,7 @@ public class SearchHistoryServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = "searchHistoryPage";
+        BasicConfigurator.configure();
         try {
             /* TODO output your page here. You may use following sample code. */
             String searchValue = request.getParameter("searchValue");
@@ -59,9 +59,9 @@ public class SearchHistoryServlet extends HttpServlet {
 
             }
         } catch (SQLException ex) {
-            Logger.getLogger(SearchHistoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("SearchHistoryServlet_SQL:"+ex.getMessage());
         } catch (NamingException ex) {
-            Logger.getLogger(SearchHistoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("SearchHistoryServlet_Naming:"+ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

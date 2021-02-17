@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import nhinh.registration.RegistrationDAO;
 import nhinh.role.RoleDAO;
 import nhinh.utils.SHA256;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -28,7 +27,7 @@ import nhinh.utils.SHA256;
  */
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(LoginServlet.class.getName());
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -43,6 +42,7 @@ public class LoginServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = "signin";
+        BasicConfigurator.configure();
         try {
             /* TODO output your page here. You may use following sample code. */
             String email = request.getParameter("txtEmail");
@@ -62,13 +62,12 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("FULLNAME", fullname);
                 url = "subject";
             }
-
         } catch (SQLException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Login_SQL:"+ex.getMessage());
         } catch (NamingException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Login_Naming:"+ex.getMessage());
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("Login_NoSuch:"+ex.getMessage());
         } finally {
             response.sendRedirect(url);
             out.close();

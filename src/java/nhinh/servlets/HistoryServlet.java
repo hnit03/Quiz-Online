@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -21,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import nhinh.history.HistoryDAO;
 import nhinh.history.HistoryDTO;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -28,7 +27,7 @@ import nhinh.history.HistoryDTO;
  */
 @WebServlet(name = "HistoryServlet", urlPatterns = {"/HistoryServlet"})
 public class HistoryServlet extends HttpServlet {
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(HistoryServlet.class.getName());
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -43,6 +42,7 @@ public class HistoryServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = "historyPage";
+        BasicConfigurator.configure();
         try {
             /* TODO output your page here. You may use following sample code. */
             HttpSession session = request.getSession(false);
@@ -56,9 +56,9 @@ public class HistoryServlet extends HttpServlet {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(HistoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("HistoryServlet_SQL:"+ex.getMessage());
         } catch (NamingException ex) {
-            Logger.getLogger(HistoryServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("HistoryServlet_Naming:"+ex.getMessage());
         }finally{
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

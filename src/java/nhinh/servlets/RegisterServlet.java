@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -22,6 +20,7 @@ import nhinh.registration.RegistrationDAO;
 import nhinh.registration.RegistrationDTO;
 import nhinh.registration.RegistrationError;
 import nhinh.utils.SHA256;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -29,7 +28,7 @@ import nhinh.utils.SHA256;
  */
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/RegisterServlet"})
 public class RegisterServlet extends HttpServlet {
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(RegisterServlet.class.getName());
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -46,6 +45,7 @@ public class RegisterServlet extends HttpServlet {
         String url = "register";
         int roleID = 1;
         int status = 1;
+        BasicConfigurator.configure();
         try {
             /* TODO output your page here. You may use following sample code. */
             String email = request.getParameter("txtEmail");
@@ -78,11 +78,11 @@ public class RegisterServlet extends HttpServlet {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(RegisterServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("RegisterServlet_SQL:"+ex.getMessage());
         } catch (NamingException ex) {
-            Logger.getLogger(RegisterServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("RegisterServlet_Naming:"+ex.getMessage());
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(RegisterServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("RegisterServlet_NoSuchAlgorithm:"+ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

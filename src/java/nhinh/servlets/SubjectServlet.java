@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -21,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import nhinh.subject.SubjectDAO;
 import nhinh.subject.SubjectDTO;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -28,7 +27,7 @@ import nhinh.subject.SubjectDTO;
  */
 @WebServlet(name = "SubjectServlet", urlPatterns = {"/SubjectServlet"})
 public class SubjectServlet extends HttpServlet {
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SubjectServlet.class.getName());
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -43,6 +42,7 @@ public class SubjectServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = "startup";
+        BasicConfigurator.configure();
         try {
             /* TODO output your page here. You may use following sample code. */
             SubjectDAO dao = new SubjectDAO();
@@ -62,9 +62,9 @@ public class SubjectServlet extends HttpServlet {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(SubjectServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("SubjectServlet_SQL:"+ex.getMessage());
         } catch (NamingException ex) {
-            Logger.getLogger(SubjectServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("SubjectServlet_Naming:"+ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

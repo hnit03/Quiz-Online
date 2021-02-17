@@ -8,8 +8,6 @@ package nhinh.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import nhinh.question.QuestionDAO;
 import nhinh.question.QuestionDTO;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  *
@@ -26,7 +25,7 @@ import nhinh.question.QuestionDTO;
  */
 @WebServlet(name = "GetQuestionToUpdateServlet", urlPatterns = {"/GetQuestionToUpdateServlet"})
 public class GetQuestionToUpdateServlet extends HttpServlet {
-
+    private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(GetQuestionToUpdateServlet.class.getName());
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -41,6 +40,7 @@ public class GetQuestionToUpdateServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String url = "updatePage";
+        BasicConfigurator.configure();
         try{
             /* TODO output your page here. You may use following sample code. */
             String questionID = request.getParameter("questionID");
@@ -50,9 +50,9 @@ public class GetQuestionToUpdateServlet extends HttpServlet {
                 request.setAttribute("QUESTION", dto);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(GetQuestionToUpdateServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("GetQuestionToUpdate_SQL:"+ex.getMessage());
         } catch (NamingException ex) {
-            Logger.getLogger(GetQuestionToUpdateServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("GetQuestionToUpdate_Naming:"+ex.getMessage());
         }finally{
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
