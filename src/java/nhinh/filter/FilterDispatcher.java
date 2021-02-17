@@ -37,20 +37,6 @@ public class FilterDispatcher implements Filter {
     public FilterDispatcher() {
     }
 
-    private void doBeforeProcessing(ServletRequest request, ServletResponse response)
-            throws IOException, ServletException {
-        if (debug) {
-            log("FilterDispatcher:DoBeforeProcessing");
-        }
-    }
-
-    private void doAfterProcessing(ServletRequest request, ServletResponse response)
-            throws IOException, ServletException {
-        if (debug) {
-            log("FilterDispatcher:DoAfterProcessing");
-        }
-    }
-
     /**
      *
      * @param request The servlet request we are processing
@@ -71,48 +57,50 @@ public class FilterDispatcher implements Filter {
         try {
             int lastIndex = uri.lastIndexOf("/");
             String resource = uri.substring(lastIndex + 1);
-            HttpSession session = req.getSession(false);
-            if (session != null) {
-                String role = (String) session.getAttribute("ROLE");
-                if (role != null) {
-                    if (role.equals("Admin")) {
-                        if (resource.equals("takeQuiz")
-                                || resource.equals("quiz")
-                                || resource.equals("checkAnswer")
-                                || resource.equals("result")
-                                || resource.equals("history")
-                                || resource.equals("historyPage")
-                                || resource.equals("searchHistory")
-                                || resource.equals("searchHistoryPage")
-                                || resource.equals("student")) {
+            if (!resource.equals(" ")) {
+                HttpSession session = req.getSession(false);
+                if (session != null) {
+                    String role = (String) session.getAttribute("ROLE");
+                    if (role != null) {
+                        if (role.equals("Admin")) {
+                            if (resource.equals("takeQuiz")
+                                    || resource.equals("quiz")
+                                    || resource.equals("checkAnswer")
+                                    || resource.equals("result")
+                                    || resource.equals("history")
+                                    || resource.equals("historyPage")
+                                    || resource.equals("searchHistory")
+                                    || resource.equals("searchHistoryPage")
+                                    || resource.equals("student")) {
+                                resource = "subject";
+                            }
+                        }
+                        if (role.equals("Student")) {
+                            if (resource.equals("search")
+                                    || resource.equals("searchPage")
+                                    || resource.equals("updatePage")
+                                    || resource.equals("delete")
+                                    || resource.equals("get")
+                                    || resource.equals("update")
+                                    || resource.equals("create")
+                                    || resource.equals("createQuestion")
+                                    || resource.equals("createSubject")
+                                    || resource.equals("manageQuestion")
+                                    || resource.equals("manage")
+                                    || resource.equals("admin")) {
+                                resource = "subject";
+                            }
+                        }
+                        if (resource.equals("login")
+                                || resource.equals("signin")
+                                || resource.equals("login")
+                                || resource.equals("register")
+                                || resource.equals("registerAcc")) {
                             resource = "subject";
                         }
                     }
-                    if (role.equals("Student")) {
-                        if (resource.equals("search")
-                                || resource.equals("searchPage")
-                                || resource.equals("updatePage")
-                                || resource.equals("delete")
-                                || resource.equals("get")
-                                || resource.equals("update")
-                                || resource.equals("create")
-                                || resource.equals("createQuestion")
-                                || resource.equals("createSubject")
-                                || resource.equals("manageQuestion")
-                                || resource.equals("manage")
-                                || resource.equals("admin")) {
-                            resource = "subject";
-                        }
-                    }
-                    if (resource.equals("login")
-                            || resource.equals("signin")
-                            || resource.equals("login")
-                            || resource.equals("register")
-                            || resource.equals("registerAcc")) {
-                        resource = "subject";
-                    }
-                }
 
+                }
             }
             url = indexPage.get(resource);
             if (url != null) {

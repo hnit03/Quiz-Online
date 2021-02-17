@@ -49,23 +49,45 @@ public class SearchQuestionServlet extends HttpServlet {
             String searchValue = request.getParameter("searchValue");
             String status = request.getParameter("cboStatus");
             String category = request.getParameter("cboCategory");
+            String pageNoStr = request.getParameter("pageNo");
+            String paging = request.getParameter("page");
+            int pageNo = 1;
+
             int statusID = 0;
             if (!searchValue.trim().isEmpty() || !status.trim().isEmpty()) {
                 if (status.equals("0") || status.equals("1")) {
                     statusID = Integer.parseInt(status);
                 }
+
+                if (pageNoStr != null) {
+                    pageNo = Integer.parseInt(pageNoStr);
+                }
+                if (paging != null) {
+                    if (paging.equals("Previous")) {
+                        pageNo -= 1;
+                    } else if (paging.equals("Next")) {
+                        pageNo = pageNo + 1;
+                    }
+                }
+                if (pageNo < 1) {
+                    pageNo = 1;
+                }
+
                 if (category.equals("Subject")) {
                     SubjectDAO dao = new SubjectDAO();
-                    dao.searchSubject(searchValue, statusID);
+                    dao.searchSubject(searchValue, statusID, pageNo);
                     List<SubjectDTO> result = dao.getSubjectList();
                     request.setAttribute("RESULT_SUBJECT", result);
+                    request.setAttribute("PAGEMAX_SUBJECT", dao.getNumberOfPage(searchValue, statusID));
                 }
                 if (category.equals("Question")) {
                     QuestionDAO dao = new QuestionDAO();
-                    dao.searchQuestion(searchValue, statusID);
+                    dao.searchQuestion(searchValue, statusID, pageNo);
                     List<QuestionDTO> result = dao.getQuestionList();
                     request.setAttribute("RESULT_QUESTION", result);
+                    request.setAttribute("PAGEMAX_QUESTION", dao.getNumberOfPage(searchValue, statusID));
                 }
+                request.setAttribute("PAGENO", pageNo);
 
             }
         } catch (SQLException ex) {

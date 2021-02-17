@@ -25,7 +25,7 @@
                         <div class="col-lg-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">Question ${counter.count}: ${dto.content}</h5>
+                                    <h5 class="card-title">Question: ${dto.content}</h5>
                                     <p>Answer 1: ${dto.answer1}</p>
                                     <p>Answer 2: ${dto.answer2}</p>
                                     <p>Answer 3: ${dto.answer3}</p>
@@ -56,6 +56,42 @@
                         </div>
                     </div>
                 </c:forEach>
+                <nav aria-label="Page navigation example">
+                    <c:set var="pageNo" value="${requestScope.PAGENO}"/>  
+                    <c:out value="${pageNo}"/>
+                    <c:set var="pageMax" value="${requestScope.PAGEMAX_QUESTION}"/>
+                    <c:out value="${pageMax}"/>
+                    <c:if test="${pageMax > 1}">
+                        <form action="search">
+                            <ul class="pagination justify-content-end">
+                                <c:if test="${pageNo <= 1}">
+                                    <li class="page-item disabled">
+                                        <input type="submit" value="Previous" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>
+                                <c:if test="${pageNo > 1}">
+                                    <li class="page-item">
+                                        <input type="submit" value="Previous" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>
+                                <c:if test="${pageNo < pageMax}">
+                                    <li class="page-item">
+                                        <input type="submit" value="Next" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>   
+                                <c:if test="${pageNo == pageMax}">
+                                    <li class="page-item disabled">
+                                        <input type="submit" value="Next" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>
+                                <input type="hidden" name="pageNo" value="${pageNo}" />
+                                <input type="hidden" name="searchValue" value="${param.searchValue}" />
+                                <input type="hidden" name="cboCategory" value="${param.cboCategory}" />
+                                <input type="hidden" name="cboStatus" value="${param.cboStatus}" />
+                            </ul>
+                        </form>
+                    </c:if>
+                </nav>
             </c:if>
             <c:set var="subject" value="${requestScope.RESULT_SUBJECT}"/>
             <c:if test="${not empty subject}">
@@ -75,7 +111,43 @@
                         </div>
                     </c:forEach> 
                 </div>
-
+                <nav aria-label="Page navigation example">
+                    <c:set var="pageNo" value="${requestScope.PAGENO}"/>                   
+                    <c:set var="pageMax" value="${requestScope.PAGEMAX_SUBJECT}"/>
+                    <c:if test="${pageMax > 1}">
+                        <form action="search">
+                            <ul class="pagination justify-content-end">
+                                <c:if test="${pageNo <= 1}">
+                                    <li class="page-item disabled">
+                                        <input type="submit" value="Previous" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>
+                                <c:if test="${pageNo > 1}">
+                                    <li class="page-item">
+                                        <input type="submit" value="Previous" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>
+                                <c:if test="${pageNo < pageMax}">
+                                    <li class="page-item">
+                                        <input type="submit" value="Next" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>   
+                                <c:if test="${pageNo == pageMax}">
+                                    <li class="page-item disabled">
+                                        <input type="submit" value="Next" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>
+                                <input type="hidden" name="pageNo" value="${pageNo}" />
+                                <input type="hidden" name="searchValue" value="${param.searchValue}" />
+                                <input type="hidden" name="cboCategory" value="${param.cboCategory}" />
+                                <input type="hidden" name="cboStatus" value="${param.cboStatus}" />
+                            </ul>
+                        </form>
+                    </c:if>
+                </nav>
+            </c:if>
+            <c:if test="${empty subject && empty question}">
+                <h2 class="text-center mt-5">Not found</h2>
             </c:if>
         </div>
     </body>

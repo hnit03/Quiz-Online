@@ -23,6 +23,7 @@ import nhinh.utils.DBHelper;
  */
 public class QuestionDAO implements Serializable {
 
+    private final int RECORDS_IN_PAGE = 20;
     private List<QuestionDTO> questionList;
 
     public List<QuestionDTO> getQuestionList() {
@@ -327,7 +328,7 @@ public class QuestionDAO implements Serializable {
         return false;
     }
 
-    public void searchQuestion(String searchValue, int status) throws SQLException, NamingException {
+    public void searchQuestion(String searchValue, int status, int pageNo) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -336,10 +337,16 @@ public class QuestionDAO implements Serializable {
             if (con != null) {
                 String sql = "select questionID,questionContent,answer1,answer2,answer3,answer4,answerCorrect,createDate,subjectID,statusID "
                         + "from Question "
-                        + "where questionContent like ? and statusID = ?";
+                        + "where questionContent like ? and statusID = ? "
+                        + "ORDER BY createDate ASC "
+                        + "offset ? rows "
+                        + "fetch next ? row only";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, "%" + searchValue + "%");
-                ps.setInt(2, status );
+                ps.setInt(2, status);
+                int dismissRecord = (pageNo - 1) * RECORDS_IN_PAGE;
+                ps.setInt(3, dismissRecord);
+                ps.setInt(4, RECORDS_IN_PAGE);
                 rs = ps.executeQuery();
                 while (rs.next()) {
                     String questionID = rs.getString("questionID");
@@ -372,5 +379,41 @@ public class QuestionDAO implements Serializable {
                 con.close();
             }
         }
+    }
+
+    public int getNumberOfPage(String searchValue, int status) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int size = 0;
+        int numofpages = 0;
+        try {
+            con = DBHelper.makeConnection();
+            String sql = "select count(questionID) as 'size' "
+                    + "from Question "
+                    + "where questionContent like ? and statusID = ? ";
+            if (con != null) {
+                ps = con.prepareStatement(sql);
+                ps.setString(1, "%" + searchValue + "%");
+                ps.setInt(2, status);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    size = rs.getInt("size");
+                }
+            }
+            numofpages = (int) Math.ceil(1.0 * size / RECORDS_IN_PAGE);
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+
+        }
+        return numofpages;
     }
 }
