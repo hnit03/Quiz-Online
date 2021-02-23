@@ -23,19 +23,8 @@
                     <thead>
                         <tr>
                     <form action="searchHistory">
-                        <th colspan="2">
+                        <th colspan="3">
                             <input type="text" name="searchValue" value="${param.searchValue}" class="form-control"/>
-                        </th>
-                        <th>
-                            <select class="form-select form-control" name="cboCategory">
-                                <c:set var="category" value="${applicationScope.CATEGORY}"/>
-                                <c:if test="${not empty category}">
-                                    <option value="">Category</option>
-                                    <c:forEach var="dto" items="${category}">
-                                        <option value="${dto.categoryID}">${dto.categoryName}</option>
-                                    </c:forEach>
-                                </c:if>
-                            </select>
                         </th>
                         <th>
                             <input type="submit" value="Search" class="btn btn-success"/>
@@ -45,6 +34,7 @@
                     <tr>
                         <th scope="col">Subject Name</th>
                         <th scope="col">Number Of Correct Answer</th>
+                        <th scope="col">Total Question</th>
                         <th scope="col">Total Point</th>
                         <th scope="col">Create Date</th>
                     </tr>
@@ -57,6 +47,7 @@
                             <tr>
                                 <th>${dto.sdto.subjectName}</th>
                                 <td>${dto.numOfCorrect}</td>
+                                <td>${dto.totalQuestion}</td>
                                 <td>${dto.totalPoint}</td>
                                 <td>${dto.createDate}</td>
                             </tr>

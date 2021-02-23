@@ -49,7 +49,6 @@ public class SearchHistoryServlet extends HttpServlet {
         try {
             /* TODO output your page here. You may use following sample code. */
             String searchValue = request.getParameter("searchValue");
-            String categoryID = request.getParameter("cboCategory");
             String pageNoStr = request.getParameter("pageNo");
             String paging = request.getParameter("page");
             if (pageNoStr != null) {
@@ -65,12 +64,12 @@ public class SearchHistoryServlet extends HttpServlet {
             if (pageNo < 1) {
                 pageNo = 1;
             }
-            if (!searchValue.trim().isEmpty() || !categoryID.trim().isEmpty()) {
+            if (!searchValue.trim().isEmpty()) {
                 HistoryDAO dao = new HistoryDAO();
                 HttpSession session = request.getSession(false);
                 if (session != null) {
                     String email = (String) session.getAttribute("EMAIL");
-                    dao.searchHistory(searchValue, categoryID, email, pageNo);
+                    dao.searchHistory(searchValue, email, pageNo);
                     List<HistoryDTO> result = dao.getListHistory();
                     request.setAttribute("HISTORY_RESULT", result);
                     request.setAttribute("PAGEMAX", dao.getNumberOfPage(email));

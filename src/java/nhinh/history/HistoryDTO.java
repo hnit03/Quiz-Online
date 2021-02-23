@@ -19,19 +19,21 @@ public class HistoryDTO implements Serializable {
     private RegistrationDTO rdto;
     private SubjectDTO sdto;
     private int numOfCorrect;
+    private int totalQuestion;
     private float totalPoint;
     private String createDate;
 
     public HistoryDTO() {
     }
 
-    public HistoryDTO(String historyID, RegistrationDTO rdto, SubjectDTO sdto, int numOfCorrect, float totalPoint, String createDate) {
+    public HistoryDTO(String historyID, RegistrationDTO rdto, SubjectDTO sdto, int numOfCorrect,int totalQuestion, float totalPoint, String createDate) {
         this.historyID = historyID;
         this.rdto = rdto;
         this.sdto = sdto;
         this.numOfCorrect = numOfCorrect;
         this.totalPoint = totalPoint;
         this.createDate = createDate;
+        this.totalQuestion = totalQuestion;
     }
 
     /**
@@ -118,5 +120,20 @@ public class HistoryDTO implements Serializable {
         this.createDate = createDate;
     }
 
+    /**
+     * @return the totalQuestion
+     */
+    public int getTotalQuestion() {
+        return totalQuestion;
+    }
+
+    /**
+     * @param totalQuestion the totalQuestion to set
+     */
+    public void setTotalQuestion(int totalQuestion) {
+        this.totalQuestion = totalQuestion;
+    }
+
+    
     
 }

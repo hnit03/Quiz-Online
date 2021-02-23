@@ -25,7 +25,10 @@
                 background-color: #0062cc;
                 
             }
-
+            .chosen{
+                background-color:#28a745;
+                border-color:#28a745;
+            }
         </style>
     </head>
     <body>
@@ -54,7 +57,7 @@
                                                       padding: 10px;
                                                       cursor: pointer;
                                                       "
-                                                      class= "dot"
+                                                      class= "dot" id="question${counter.count}"
                                                       onclick="currentSlide(${counter.count})"
                                                       >
                                                     ${counter.count}
@@ -74,8 +77,11 @@
                                                 <h5 class="card-title">Question ${counter.count}: ${question.content}</h5>
                                                 <c:set var="listAnswer" value="${question.answerList}"/>
                                                 <c:forEach var="answer" items="${listAnswer}">
-                                                    <input class="form-check-input" type="radio" name="answer${question.questionID}" value="${answer.answerID}" id="${answer.answerID}">
-                                                    <label class="form-check-label" for="${answer.answerID}">
+                                                    <input class="form-check-input" type="radio" 
+                                                           name="answer${question.questionID}" value="${answer.answerID}" 
+                                                           onclick="chosen(${counter.count})"
+                                                           >
+                                                    <label class="form-check-label">
                                                         ${answer.answerContent}
                                                     </label>
                                                     <br>
@@ -86,6 +92,9 @@
                                     </div>
 
                                     <script>
+                                        function chosen(id){
+                                            document.getElementById("question"+id).className += " chosen";
+                                        }
                                         var slideIndex = 1;
                                         showSlides(slideIndex);
 
@@ -97,7 +106,7 @@
                                             showSlides(slideIndex = n);
                                         }
 
-                                        function showSlides(n, id) {
+                                        function showSlides(n) {
                                             var i;
                                             var slides = document.getElementsByClassName("slides");
                                             var dots = document.getElementsByClassName("dot");

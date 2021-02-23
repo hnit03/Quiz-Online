@@ -25,20 +25,21 @@ import nhinh.utils.DBHelper;
  */
 public class HistoryDAO implements Serializable {
 
-    public boolean insertHistory(String email, String subjectID, int numOfCorrect, float total, String createDate) throws SQLException, NamingException {
+    public boolean insertHistory(String email, String subjectID, int numOfCorrect, int totalQuestion, float total, String createDate) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "insert into History(historyID,email,subjectID,numOfCorrect,total,createDate) "
-                        + "values(NEWID(),?,?,?,?,?)";
+                String sql = "insert into History(historyID,email,subjectID,numOfCorrect,totalQuestion,total,createDate) "
+                        + "values(NEWID(),?,?,?,?,?,?)";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, email);
                 ps.setString(2, subjectID);
                 ps.setInt(3, numOfCorrect);
-                ps.setFloat(4, total);
-                ps.setString(5, createDate);
+                ps.setInt(4, totalQuestion);
+                ps.setFloat(5, total);
+                ps.setString(6, createDate);
                 int success = ps.executeUpdate();
                 if (success == 1) {
                     return true;
@@ -105,7 +106,7 @@ public class HistoryDAO implements Serializable {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select historyID,subjectID,numOfCorrect, total,createDate "
+                String sql = "select historyID,subjectID,numOfCorrect,totalQuestion, total,createDate "
                         + "from History "
                         + "where email = ? ";
                 ps = con.prepareStatement(sql);
@@ -114,6 +115,7 @@ public class HistoryDAO implements Serializable {
                 while (rs.next()) {
                     String historyID = rs.getString("historyID");
                     int numOfCorrect = rs.getInt("numOfCorrect");
+                    int totalQuestion = rs.getInt("totalQuestion");
                     float total = rs.getFloat("total");
                     String subjectID = rs.getString("subjectID");
                     String createDate = rs.getString("createDate");
@@ -121,7 +123,7 @@ public class HistoryDAO implements Serializable {
 
                     SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
 
-                    HistoryDTO dto = new HistoryDTO(historyID, rdto, sdto, numOfCorrect, total, createDate);
+                    HistoryDTO dto = new HistoryDTO(historyID, rdto, sdto, numOfCorrect,totalQuestion, total, createDate);
                     if (this.listHistory == null) {
                         this.listHistory = new ArrayList<>();
                     }
@@ -184,7 +186,7 @@ public class HistoryDAO implements Serializable {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select email,subjectID,numOfCorrect, total,createDate "
+                String sql = "select email,subjectID,numOfCorrect,totalQuestion, total,createDate "
                         + "from History "
                         + "where historyID = ?";
                 ps = con.prepareStatement(sql);
@@ -200,9 +202,10 @@ public class HistoryDAO implements Serializable {
                     SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
 
                     int numOfCorrect = rs.getInt("numOfCorrect");
+                    int totalQuestion = rs.getInt("totalQuestion");
                     float total = rs.getFloat("total");
                     String createDate = rs.getString("createDate");
-                    dto = new HistoryDTO(historyID, rdto, sdto, numOfCorrect, total, createDate);
+                    dto = new HistoryDTO(historyID, rdto, sdto, numOfCorrect,totalQuestion, total, createDate);
                 }
             }
         } finally {
@@ -219,7 +222,7 @@ public class HistoryDAO implements Serializable {
         return dto;
     }
 
-    public void searchHistory(String searchValue, String categoryID, String email, int pageNo) throws SQLException, NamingException {
+    public void searchHistory(String searchValue, String email, int pageNo) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -228,26 +231,26 @@ public class HistoryDAO implements Serializable {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select historyID,subjectID,numOfCorrect, total,createDate "
+                String sql = "select historyID,subjectID,numOfCorrect,totalQuestion, total,createDate "
                         + "from History "
                         + "where email = ? and subjectID in "
                         + "(select subjectID "
                         + "from Subject "
-                        + "where subjectName like ? and statusID = 0 and categoryID like ?) "
+                        + "where subjectName like ? and statusID = 0) "
                         + "order by createDate asc "
                         + "offset ? rows "
                         + "fetch next ? row only";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, email);
                 ps.setString(2, "%" + searchValue + "%");
-                ps.setString(3, "%" + categoryID + "%");
                 int dismissRecord = (pageNo - 1) * RECORDS_IN_PAGE;
-                ps.setInt(4, dismissRecord);
-                ps.setInt(5, RECORDS_IN_PAGE);
+                ps.setInt(3, dismissRecord);
+                ps.setInt(4, RECORDS_IN_PAGE);
                 rs = ps.executeQuery();
                 while (rs.next()) {
                     String historyID = rs.getString("historyID");
                     int numOfCorrect = rs.getInt("numOfCorrect");
+                    int totalQuestion = rs.getInt("totalQuestion");
                     float total = rs.getFloat("total");
                     String subjectID = rs.getString("subjectID");
                     String createDate = rs.getString("createDate");
@@ -255,7 +258,7 @@ public class HistoryDAO implements Serializable {
 
                     SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
 
-                    HistoryDTO dto = new HistoryDTO(historyID, rdto, sdto, numOfCorrect, total, createDate);
+                    HistoryDTO dto = new HistoryDTO(historyID, rdto, sdto, numOfCorrect,totalQuestion, total, createDate);
                     if (this.listHistory == null) {
                         this.listHistory = new ArrayList<>();
                     }

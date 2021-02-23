@@ -90,7 +90,8 @@ public class AnswerDAO implements Serializable {
             if (con != null) {
                 String sql = "select answerID,answerContent,isCorrect "
                         + "from Answer "
-                        + "where questionID = ?";
+                        + "where questionID = ? "
+                        + "order by NewID()";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, questionID);
                 rs = ps.executeQuery();

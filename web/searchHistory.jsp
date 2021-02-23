@@ -23,23 +23,8 @@
                 <thead>
                     <tr>
                 <form action="searchHistory">
-                    <th colspan="2" style="width: 654px;">
+                    <th colspan="3">
                         <input type="text" name="searchValue" value="${param.searchValue}" class="form-control"/>
-                    </th>
-                    <th style="width: 249px;">
-                        <select class="form-select form-control" name="cboCategory">
-                            <c:set var="category" value="${applicationScope.CATEGORY}"/>
-                            <c:if test="${not empty category}">
-                                <option value="">Category</option>
-                                <c:forEach var="dto" items="${category}">
-                                    <option value="${dto.categoryID}"
-                                            <c:if test="${dto.categoryID eq param.cboCategory}">
-                                                selected
-                                            </c:if>
-                                            >${dto.categoryName}</option>
-                                </c:forEach>
-                            </c:if>
-                        </select>
                     </th>
                     <th>
                         <input type="submit" value="Search" class="btn btn-success form-control"/>

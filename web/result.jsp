@@ -21,7 +21,6 @@
                 <div class="col-lg-2"></div>
                 <div class="col-lg-8">
                     <c:set var="dto" value="${requestScope.RESULT}"/>
-                    <c:set var="totalQuestion" value="${requestScope.NUM_QUESTION}"/>
                     
                     <table class="table table-info">
                         <thead>
@@ -34,7 +33,7 @@
                         <tbody>
                             <tr>
                                 <td>${dto.createDate}</td>
-                                <td>${dto.numOfCorrect}/${totalQuestion}</td>
+                                <td>${dto.numOfCorrect}/${dto.totalQuestion}</td>
                                 <td>${dto.totalPoint}</td>
                             </tr>
                         </tbody>

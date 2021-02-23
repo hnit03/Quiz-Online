@@ -22,7 +22,6 @@ import javax.servlet.http.HttpSession;
 import nhinh.answer.AnswerDAO;
 import nhinh.answer.AnswerDTO;
 import nhinh.history.HistoryDAO;
-import nhinh.history.HistoryDTO;
 import nhinh.question.QuestionDAO;
 import nhinh.question.QuestionDTO;
 import nhinh.utils.Utils;
@@ -51,7 +50,7 @@ public class CheckAnswerServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String url = "result";
+        String url = "error";
         Date date = new Date();
         BasicConfigurator.configure();
         try {
@@ -96,11 +95,12 @@ public class CheckAnswerServlet extends HttpServlet {
                     }
                     session.removeAttribute("NUM_QUESTION");
                     totalPoint = (float) ((numOfCorrect / (1.0 * totalQuestion)) * 10);
-                    hdao.insertHistory(email, subjectID, numOfCorrect, totalPoint, createDate);
-                    String historyID = hdao.getHistoryID(email, subjectID, createDate);
-                    HistoryDTO dto = hdao.getHistoryDTO(historyID);
-                    request.setAttribute("NUM_QUESTION", totalQuestion);
-                    request.setAttribute("RESULT", dto);
+                    boolean success = hdao.insertHistory(email, subjectID, numOfCorrect,totalQuestion, totalPoint, createDate);
+                    if (success) {
+                        url = "result";
+                        String historyID = hdao.getHistoryID(email, subjectID, createDate);
+                        request.setAttribute("RESULT", hdao.getHistoryDTO(historyID));
+                    }
                 }
 
             }

@@ -59,7 +59,7 @@
                         </li>
                     </c:if>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="subject">Home</a>
+                        <a class="nav-link" aria-current="page" href="subject">Home</a>
                     </li>
 
                     <c:if test="${empty sessionScope.FULLNAME}">
