@@ -30,31 +30,64 @@
                                        placeholder="Question Content" 
                                        name="content" value="${dto.content}">
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">First Answer:</label>
-                                <input type="text" class="form-control" placeholder="First Answer"
-                                       name="answer1" value="${dto.answer1}">
-                            </div> 
-                            <div class="mb-3">
-                                <label class="form-label">Second Answer:</label>
-                                <input type="text" class="form-control" placeholder="Second Answer"
-                                       name="answer2" value="${dto.answer2}">
-                            </div> 
-                            <div class="mb-3">
-                                <label class="form-label">Third Answer:</label>
-                                <input type="text" class="form-control" placeholder="Third Answer"
-                                       name="answer3" value="${dto.answer3}">
-                            </div> 
-                            <div class="mb-3">
-                                <label class="form-label">Fourth Answer:</label>
-                                <input type="text" class="form-control" placeholder="Fourth Answer"
-                                       name="answer4" value="${dto.answer4}">
-                            </div> 
-                            <div class="mb-3">
-                                <label class="form-label">Answer Correct:</label>
-                                <input type="text" class="form-control" placeholder="Answer Correct"
-                                       name="answerCorrect" value="${dto.answerCorrect}">
-                            </div> 
+                            <c:set var="answerList" value="${dto.answerList}"/>
+                            <c:if test="${not empty answerList}">
+                                <c:forEach var="answer" items="${answerList}" varStatus="counter">
+                                    <div class="mb-3">
+                                        <label class="form-label">Answer:</label>
+                                        <input type="text" class="form-control" placeholder="Answer"
+                                               name="answer" value="${answer.answerContent}"
+                                               id="answer${counter.count}"
+                                               onchange="addOption(${counter.count})">
+                                    </div>
+                                </c:forEach>
+                                <div id="answerDiv"></div>
+                                <span onclick="addAnswer()" class="btn btn-outline-secondary form-control">+</span>
+                                <p id="number" style="display: none;">5</p>
+                                <script>
+                                    function addAnswer() {
+                                        var id = document.getElementById("number").innerHTML;
+                                        var number = parseInt(id);
+                                        var add = document.getElementById("answerDiv");
+                                        var div = document.createElement("DIV");
+                                        div.className = "mb-3";
+                                        div.innerHTML = "<label class=\"form-label\">Answer</label><input type=\"text\" class=\"form-control\" placeholder=\"Answer\"" +
+                                                "name=\"answer\" value=\"\"" +
+                                                "id=\"answer" + number + "\" onchange=\"addOption("
+                                                + number
+                                                + ")\"" +
+                                                "required>";
+                                        add.appendChild(div);
+                                        document.getElementById("number").innerHTML = number + 1;
+                                    }
+                                </script>
+                                <div class="mb-3">
+                                    <label class="form-label">Answer Correct:</label>
+                                    <select class="form-control" name="answerCorrect" id="select">
+                                        <c:forEach var="answer" items="${answerList}" varStatus="counter">
+                                            <option value="${answer.answerID}" id="${counter.count}"
+                                                    <c:if test="${answer.type}">
+                                                        selected
+                                                    </c:if>
+                                                    >${answer.answerContent}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div> 
+                                <script>
+                                    function addOption(id) {
+                                        console.log(id);
+                                        var text = document.getElementById("answer" + id).value;
+                                        var x = document.getElementById("select");
+                                        var c = document.createElement("option");
+                                        c.text = text;
+                                        c.value = text;
+                                        x.options.remove(id - 1);
+                                        x.options.add(c, id - 1);
+
+                                    }
+                                </script>
+                            </c:if>
+
                             <div class="mb-3">
                                 <label class="form-label">Status:</label>
                                 <select name="cboStatus" class="form-control">

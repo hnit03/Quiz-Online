@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import nhinh.answer.AnswerDAO;
+import nhinh.answer.AnswerDTO;
 import nhinh.question.QuestionDAO;
 import nhinh.question.QuestionDTO;
 import org.apache.log4j.BasicConfigurator;
@@ -58,6 +59,9 @@ public class UpdateQuestionServlet extends HttpServlet {
                 boolean type = false;
                 if (success) {
                     AnswerDAO adao = new AnswerDAO();
+                    for (AnswerDTO answerDTO : oldDTO.getAnswerList()) {
+                        adao.deleteAnwser(answerDTO.getAnswerID());
+                    }
                     for (String answer : answerContent) {
                         if (answer.equals(answerCorrect)) {
                             type = true;

@@ -139,7 +139,7 @@ public class QuestionDAO implements Serializable {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select questionContent,createDate,subjectID,statusID "
+                String sql = "select questionContent,createDate,subjectID,statusID,creator "
                         + "from Question "
                         + "where questionID = ?";
                 ps = con.prepareStatement(sql);
@@ -153,7 +153,6 @@ public class QuestionDAO implements Serializable {
                     SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
                     int statusID = rs.getInt("statusID");
                     adao.getAllAnwserList(questionID);
-                    adao.getAllAnwserList(questionID);
                     List<AnswerDTO> list = adao.getAnswerList();
                     List<AnswerDTO> listAnswer = new ArrayList<>();
                     if (list != null) {
@@ -163,7 +162,6 @@ public class QuestionDAO implements Serializable {
                     }
                     String creator = rs.getString("creator");
                     dto = new QuestionDTO(questionID, questionContent, createDate, sdto, statusID,listAnswer, creator);
-                    adao.removeListElem();
                 }
             }
         } finally {

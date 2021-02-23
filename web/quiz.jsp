@@ -74,7 +74,7 @@
                                                 <h5 class="card-title">Question ${counter.count}: ${question.content}</h5>
                                                 <c:set var="listAnswer" value="${question.answerList}"/>
                                                 <c:forEach var="answer" items="${listAnswer}">
-                                                    <input class="form-check-input" type="radio" name="answerID" value="${answer.answerID}" id="${answer.answerID}">
+                                                    <input class="form-check-input" type="radio" name="answer${question.questionID}" value="${answer.answerID}" id="${answer.answerID}">
                                                     <label class="form-check-label" for="${answer.answerID}">
                                                         ${answer.answerContent}
                                                     </label>

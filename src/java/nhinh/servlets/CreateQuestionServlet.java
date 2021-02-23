@@ -52,7 +52,7 @@ public class CreateQuestionServlet extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             String content = request.getParameter("content");
             String[] answerContent = request.getParameterValues("answer");
-            String answerCorr = request.getParameter("answerCorrect");
+            String answerCorr = request.getParameter("cboAnswerCorrect");
             String subjectID = request.getParameter("subjectID");
             boolean type = false;
             if (!content.trim().isEmpty() && answerContent != null && !answerCorr.trim().isEmpty()) {

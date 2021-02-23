@@ -139,19 +139,18 @@ public class SubjectDAO implements Serializable {
         return dto;
     }
 
-    public boolean createNewSubject(String subjectName, String time, int statusID,String categoryID) throws SQLException, NamingException {
+    public boolean createNewSubject(String subjectName, String time, int statusID) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "insert into Subject(subjectID,subjectName,time,statusID,categoryID) "
-                        + "values(NEWID(),?,?,?,?)";
+                String sql = "insert into Subject(subjectID,subjectName,time,statusID) "
+                        + "values(NEWID(),?,?,?)";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, subjectName);
                 ps.setString(2, time);
                 ps.setInt(3, statusID);
-                ps.setString(4, categoryID);
                 int row = ps.executeUpdate();
                 if (row > 0) {
                     return true;

@@ -35,14 +35,15 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Question ${counter.count}: ${dto.content}</h5>
-                                    <c:set var="listAnswer" value="${dto.answerList}"/>
-                                    <c:forEach var="answer" items="${listAnswer}">
-                                        <input class="form-check-input" type="radio" name="answerID" value="${answer.answerID}" id="${answer.answerID}">
-                                        <label class="form-check-label" for="${answer.answerID}">
-                                            ${answer.answerContent}
-                                        </label>
-                                        <br>
-                                    </c:forEach>
+                                    <div class="ml-3" style="min-height: 100px;">
+                                        <c:set var="listAnswer" value="${dto.answerList}"/>
+                                        <c:if test="${not empty listAnswer}">
+                                            <c:forEach var="answer" items="${listAnswer}">
+                                                Answer: ${answer.answerContent}
+                                                <br>
+                                            </c:forEach>
+                                        </c:if>
+                                    </div>
                                     <div class="row">
                                         <div class="col-lg-9"></div>
                                         <div class="col-lg-3 text-center">

@@ -45,14 +45,13 @@ public class CreateNewSubjectServlet extends HttpServlet {
             String subjectName = request.getParameter("subjectName");
             String minute = request.getParameter("minute");
             String second = request.getParameter("second");
-            String categoryID = request.getParameter("cboCategory");
             if (second.trim().isEmpty()) {
                 second = "00";
             }
-            if (!subjectName.trim().isEmpty()&&!minute.trim().isEmpty()&&!categoryID.trim().isEmpty()) {
+            if (!subjectName.trim().isEmpty()&&!minute.trim().isEmpty()) {
                 String time = minute + ":" + second;
                 SubjectDAO sdao = new SubjectDAO();
-                boolean success = sdao.createNewSubject(subjectName, time,statusID,categoryID);
+                boolean success = sdao.createNewSubject(subjectName, time,statusID);
                 if (success) {
                     url = "subject";
                 }

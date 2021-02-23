@@ -27,11 +27,12 @@ public class AnswerDAO implements Serializable {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "insert into Answer(answerID,questionID,answerContent,type) "
+                String sql = "insert into Answer(answerID,questionID,answerContent,isCorrect) "
                         + "values(NEWID(),?,?,?)";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, questionID);
                 ps.setString(2, answerContent);
+                ps.setBoolean(3, type);
                 int row = ps.executeUpdate();
                 if (row > 0) {
                     return true;
@@ -48,6 +49,32 @@ public class AnswerDAO implements Serializable {
         return false;
     }
 
+    public boolean deleteAnwser(String answerID) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "delete from Answer "
+                        + "where answerID = ?";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, answerID);
+                int row = ps.executeUpdate();
+                if (row > 0) {
+                    return true;
+                }
+            }
+        } finally {
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+        return false;
+    }
+    
     private List<AnswerDTO> answerList;
 
     public List<AnswerDTO> getAnswerList() {
@@ -105,7 +132,7 @@ public class AnswerDAO implements Serializable {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select questionID,answerContent,type "
+                String sql = "select questionID,answerContent,isCorrect "
                         + "from Answer "
                         + "where answerID = ?";
                 ps = con.prepareStatement(sql);
@@ -114,7 +141,7 @@ public class AnswerDAO implements Serializable {
                 if (rs.next()) {                    
                     String questionID = rs.getString("questionID");
                     String answerContent = rs.getString("answerContent");
-                    boolean type = rs.getBoolean("type");
+                    boolean type = rs.getBoolean("isCorrect");
                     dto = new AnswerDTO(answerID, questionID, answerContent, type);
                 }
             }

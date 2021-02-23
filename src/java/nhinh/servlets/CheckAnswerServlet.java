@@ -63,15 +63,17 @@ public class CheckAnswerServlet extends HttpServlet {
                     int totalQuestion = (int) totalObj;
                     String subjectID = request.getParameter("subjectID");
                     String[] questionIDStr = request.getParameterValues("questionID");
-                    String[] answerChosen = request.getParameterValues("answerID");
-
+            
                     QuestionDAO dao = new QuestionDAO();
+                    List<String> answerChosen = new ArrayList<>();
                     List<QuestionDTO> list = new ArrayList<>();
                     for (String questionID : questionIDStr) {
                         QuestionDTO dto = dao.getQuestionDTO(questionID);
                         list.add(dto);
+                        String answer = request.getParameter("answer"+questionID);
+                        answerChosen.add(answer);
                     }
-
+                    
                     AnswerDAO adao = new AnswerDAO();
                     List<AnswerDTO> answer = new ArrayList<>();
                     for (String a : answerChosen) {
@@ -80,7 +82,6 @@ public class CheckAnswerServlet extends HttpServlet {
                     }
                     
                     String email = (String) session.getAttribute("EMAIL");
-
                     float totalPoint = 0;
 
                     int numOfCorrect = 0;
@@ -88,7 +89,6 @@ public class CheckAnswerServlet extends HttpServlet {
                     Utils utils = new Utils();
                     String createDate = utils.formatDateTimeToString(date);
                     HistoryDAO hdao = new HistoryDAO();
-
                     for (AnswerDTO answerDTO : answer) {
                         if (answerDTO.isType()) {
                             numOfCorrect++;
