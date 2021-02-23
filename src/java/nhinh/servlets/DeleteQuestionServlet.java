@@ -38,7 +38,7 @@ public class DeleteQuestionServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String url = "";
+        String url = "error";
         BasicConfigurator.configure();
         try {
             /* TODO output your page here. You may use following sample code. */

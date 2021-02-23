@@ -39,17 +39,14 @@ public class StartUpServlet extends HttpServlet {
         try {
             /* TODO output your page here. You may use following sample code. */
             HttpSession session = request.getSession(false);
-            if (session!=null) {
+            if (session != null) {
                 String roleName = (String) session.getAttribute("ROLE");
-                if (roleName!=null) {
-                    if (roleName.equals("Admin")) {
-                        url = "admin";
-                    }else if (roleName.equals("Student")) {
-                        url = "student";
-                    }
+                if (roleName != null) {
+                    url = "subject";
                 }
+
             }
-        }finally{
+        } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
             out.close();

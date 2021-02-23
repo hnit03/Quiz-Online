@@ -114,7 +114,8 @@ public class FilterDispatcher implements Filter {
                 chain.doFilter(request, response);
             }
         } catch (Throwable t) {
-            log.error("Filter_Throwable:" + t.getMessage());
+//            log.error("Filter_Throwable:" + t.getMessage());
+t.printStackTrace();
         }
     }
 

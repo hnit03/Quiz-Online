@@ -43,16 +43,19 @@ public class HistoryServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         String url = "historyPage";
         BasicConfigurator.configure();
+        
         try {
             /* TODO output your page here. You may use following sample code. */
             HttpSession session = request.getSession(false);
             if (session!=null) {
                 String email = (String) session.getAttribute("EMAIL");
+                
                 if (email!=null) {
                     HistoryDAO hdao = new HistoryDAO();
                     hdao.getListOfHistory(email);
                     List<HistoryDTO> list = hdao.getListHistory();
                     request.setAttribute("HISTORY", list);
+                    
                 }
             }
         } catch (SQLException ex) {

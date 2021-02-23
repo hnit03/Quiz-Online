@@ -27,24 +27,22 @@
                                        placeholder="Subject Name" class="form-control mb-2" required/>
                                 <label class="form-label">Time</label>
                                 <div class="d-flex">
-                                    <input type="text" name="minute" value="" placeholder="Minute" class="form-control mb-2" required/>
+                                    <input type="number" 
+                                           name="minute" 
+                                           value="" 
+                                           placeholder="Minute" 
+                                           class="form-control mb-2" 
+                                           min="1"
+                                           required/>
                                     <label class="nav-link">-</label>
-                                    <input type="text" name="second" value="" placeholder="Second" class="form-control mb-2" maxlength="2"/>
+                                    <input type="number" 
+                                           name="second" 
+                                           value="" 
+                                           placeholder="Second" 
+                                           class="form-control mb-2" 
+                                           min="0" max="60"
+                                           maxlength="2"/>
                                 </div>
-                                <label class="form-label">Category</label>
-                                <c:set var="category" value="${applicationScope.CATEGORY}"/>
-                                <select class="form-select form-control" name="cboCategory">
-                                    <c:if test="${not empty category}">
-                                        <c:forEach var="cdto" items="${category}" >
-                                            <option value="${cdto.categoryID}"
-                                                    <c:if test="${cdto.categoryID eq param.cboCategory}">
-                                                        selected
-                                                    </c:if>
-                                                    >${cdto.categoryName}</option>
-                                        </c:forEach>
-                                    </c:if>
-                                </select>
-
                                 <input type="submit" value="Create"  class="form-control btn btn-success mt-3"/>
                         </form>
                     </div> 
@@ -59,7 +57,6 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="card-title">${dto.subjectName}</h5>
-                                            <h6 class="card-subtitle mb-2 text-muted">${dto.cdto.categoryName}</h6>
                                             <c:url var="manage" value="manage">
                                                 <c:param name="subjectID" value="${dto.subjectID}"/>
                                             </c:url>

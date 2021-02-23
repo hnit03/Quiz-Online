@@ -34,7 +34,7 @@ public class GetSubjectToCreateQuestionServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String url = "";
+        String url = "error";
         try {
             /* TODO output your page here. You may use following sample code. */
             String subjectID = request.getParameter("subjectID");

@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import nhinh.answer.AnswerDAO;
+import nhinh.answer.AnswerDTO;
 import nhinh.history.HistoryDAO;
 import nhinh.history.HistoryDTO;
 import nhinh.question.QuestionDAO;
@@ -61,11 +63,7 @@ public class CheckAnswerServlet extends HttpServlet {
                     int totalQuestion = (int) totalObj;
                     String subjectID = request.getParameter("subjectID");
                     String[] questionIDStr = request.getParameterValues("questionID");
-                    List<String> answer = new ArrayList<>();
-                    for (String questionID : questionIDStr) {
-                        String answerChosen = request.getParameter("answer" + questionID);
-                        answer.add(answerChosen);
-                    }
+                    String[] answerChosen = request.getParameterValues("answerID");
 
                     QuestionDAO dao = new QuestionDAO();
                     List<QuestionDTO> list = new ArrayList<>();
@@ -74,9 +72,14 @@ public class CheckAnswerServlet extends HttpServlet {
                         list.add(dto);
                     }
 
-                    String email = "";
-
-                    email = (String) session.getAttribute("EMAIL");
+                    AnswerDAO adao = new AnswerDAO();
+                    List<AnswerDTO> answer = new ArrayList<>();
+                    for (String a : answerChosen) {
+                        AnswerDTO adto = adao.getAnwserDTO(a);
+                        answer.add(adto);
+                    }
+                    
+                    String email = (String) session.getAttribute("EMAIL");
 
                     float totalPoint = 0;
 
@@ -86,13 +89,10 @@ public class CheckAnswerServlet extends HttpServlet {
                     String createDate = utils.formatDateTimeToString(date);
                     HistoryDAO hdao = new HistoryDAO();
 
-                    int count = 0;
-
-                    while (count < answer.size()) {
-                        if (answer.get(count).equals(list.get(count).getAnswerCorrect())) {
+                    for (AnswerDTO answerDTO : answer) {
+                        if (answerDTO.isType()) {
                             numOfCorrect++;
                         }
-                        count++;
                     }
                     session.removeAttribute("NUM_QUESTION");
                     totalPoint = (float) ((numOfCorrect / (1.0 * totalQuestion)) * 10);

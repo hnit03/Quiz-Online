@@ -13,111 +13,175 @@
         <title>Take Quiz</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+        <style>
+            .slideshow-container {
+                max-width: 100%;
+                position: relative;
+                margin: auto;
+            }
+            .slides {display: none;} 
+            .active, .dot:hover {
+                color: white;
+                background-color: #0062cc;
+                
+            }
+
+        </style>
     </head>
     <body>
         <jsp:include page="navbar.jsp"/>
         <div class="container">
             <c:set var="listQuestion" value="${requestScope.QUESTION_LIST}"/>
             <c:set var="sdto" value="${requestScope.SUBJECT}"/>
-            <c:if test="${not empty listQuestion && not empty sdto}">
-                <div class="row">
-                    <div class="col-lg-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">${sdto.subjectName}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">${sdto.cdto.categoryName}</h6>
-                                <p class="card-text">Time: <span id="time">${sdto.time}</span></p>
+            <div class="py-5">
+                <c:if test="${not empty listQuestion && not empty sdto}">
+                    <div class="row">
+                        <div class="col-lg-3 ">
+                            <div class="card px-3 py-3" style="min-height: 200px;">
+                                <div class="card-body">
+                                    <h5 class="card-title">${sdto.subjectName}</h5>
+                                    <p class="card-text">Time: <span id="time">${sdto.time}</span></p>
+                                    <div class="row">
+                                        <c:forEach var="question" items="${listQuestion}" varStatus="counter">
+                                            <div class="col-lg-2">
+                                                <span 
+                                                      style="
+                                                      color:black;
+                                                      border:1px solid #007bff;
+                                                      text-align:center;
+                                                      vertical-align:middle;
+                                                      border-radius: 25%;
+                                                      padding: 10px;
+                                                      cursor: pointer;
+                                                      "
+                                                      class= "dot"
+                                                      onclick="currentSlide(${counter.count})"
+                                                      >
+                                                    ${counter.count}
+                                                </span>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-9">
-                        <form name="exam" action="checkAnswer" method="post">
-                            <c:forEach var="question" items="${listQuestion}" varStatus="counter">
-                                <div class="card mb-3">
-                                    <div class="card-body ml-3">
-                                        <h5 class="card-title">Question ${counter.count}: ${question.content}</h5>
-                                        <input class="form-check-input" type="radio" name="answer${question.questionID}" id="flexRadioDefault1" value="${question.answer1}">
-                                        <label class="form-check-label" for="flexRadioDefault1">
-                                            ${question.answer1}
-                                        </label>
-                                        <br>
-                                        <input class="form-check-input" type="radio" name="answer${question.questionID}" id="flexRadioDefault2" value="${question.answer2}">
-                                        <label class="form-check-label" for="flexRadioDefault2">
-                                            ${question.answer2}
-                                        </label>
-                                        <br>
-                                        <input class="form-check-input" type="radio" name="answer${question.questionID}" id="flexRadioDefault3" value="${question.answer3}">
-                                        <label class="form-check-label" for="flexRadioDefault3">
-                                            ${question.answer3}
-                                        </label>
-                                        <br>
-                                        <input class="form-check-input" type="radio" name="answer${question.questionID}" id="flexRadioDefault4" value="${question.answer4}">
-                                        <label class="form-check-label" for="flexRadioDefault4">
-                                            ${question.answer4}
-                                        </label>
+                        <div class="col-lg-9">
+                            <form name="exam" action="checkAnswer" method="post">
+                                <c:forEach var="question" items="${listQuestion}" varStatus="counter">
+                                    <div class="slideshow-container">
+                                        <div class="card mb-3 slides " style="min-height:  200px;">
+                                            <div class="card-body ml-3">
+                                                <h5 class="card-title">Question ${counter.count}: ${question.content}</h5>
+                                                <c:set var="listAnswer" value="${question.answerList}"/>
+                                                <c:forEach var="answer" items="${listAnswer}">
+                                                    <input class="form-check-input" type="radio" name="answerID" value="${answer.answerID}" id="${answer.answerID}">
+                                                    <label class="form-check-label" for="${answer.answerID}">
+                                                        ${answer.answerContent}
+                                                    </label>
+                                                    <br>
+                                                </c:forEach>
+                                            </div>
+
+                                        </div>
                                     </div>
 
+                                    <script>
+                                        var slideIndex = 1;
+                                        showSlides(slideIndex);
+
+                                        function plusSlides(n) {
+                                            showSlides(slideIndex += n);
+                                        }
+
+                                        function currentSlide(n) {
+                                            showSlides(slideIndex = n);
+                                        }
+
+                                        function showSlides(n, id) {
+                                            var i;
+                                            var slides = document.getElementsByClassName("slides");
+                                            var dots = document.getElementsByClassName("dot");
+                                            if (n > slides.length) {
+                                                slideIndex = 1
+                                            }
+                                            if (n < 1) {
+                                                slideIndex = slides.length
+                                            }
+                                            for (i = 0; i < slides.length; i++) {
+                                                slides[i].style.display = "none";
+                                            }
+                                            for (i = 0; i < dots.length; i++) {
+                                                dots[i].className = dots[i].className.replace(" active", "");
+                                            }
+                                            slides[slideIndex - 1].style.display = "block";
+                                            dots[slideIndex - 1].className += " active";
+                                        }
+                                    </script>
+                                    <input type="hidden" name="questionID" value="${question.questionID}" />
+
+                                </c:forEach>
+                                <div class="pagination justify-content-end">
+                                    <a class="btn btn-success" onclick="plusSlides(-1)">&#10094;</a>
+                                    <a class="btn btn-success" onclick="plusSlides(1)" >&#10095;</a>
                                 </div>
 
-                                <input type="hidden" name="questionID" value="${question.questionID}" />
-
-                            </c:forEach>
-                            <br>
-                            <div class="row">
-                                <div class="col-lg-10"></div>
-                                <div class="col-lg-2">
-                                    <input type="hidden" name="subjectID" value="${requestScope.SUBJECTID}" />
-                                    <input type="submit" value="Finish" class="btn btn-success mb-3" style="width: 100%"/>
+                                <br>
+                                <div class="row">
+                                    <div class="col-lg-10"></div>
+                                    <div class="col-lg-2">
+                                        <input type="hidden" name="subjectID" value="${requestScope.SUBJECTID}" />
+                                        <input type="submit" value="Finish" class="btn btn-success mb-3" style="width: 100%"/>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            </c:if>
-            <c:if test="${empty listQuestion && not empty sdto}">
-                <div class="text-center">
-                    <div class="">
-                        <h5 class="">${sdto.subjectName}</h5>
-                        <h6 class="mb-2 text-muted">${sdto.cdto.categoryName}</h6>
-                        <a href="subject" class="card-link">Back To Home Page</a>
+                </c:if>
+                <c:if test="${empty listQuestion && not empty sdto}">
+                    <div class="text-center">
+                        <div class="">
+                            <h5 class="">${sdto.subjectName}</h5>
+                            <h6 class="mb-2 text-muted">${sdto.cdto.categoryName}</h6>
+                            <a href="subject" class="card-link">Back To Home Page</a>
+                        </div>
                     </div>
-                </div>
-            </c:if>
-        </div>
-        <script>
-            var time = document.getElementById("time").innerHTML;
-            var min = parseInt(time.split(":", 1));
-            var sec = parseInt(time.split(":").pop());
-            var examTime = min * 60 + sec;
-            function startTimer(duration, display) {
-                var timer = duration;
-                var minutes, seconds;
-                var form = document.forms.exam;
+                </c:if>
 
-                var t = setInterval(function () {
-                    minutes = parseInt(timer / 60, 10);
-                    seconds = parseInt(timer % 60, 10);
-                    minutes = minutes < 10 ? "0" + minutes : minutes;
-                    seconds = seconds < 10 ? "0" + seconds : seconds;
+            </div>
+            <script>
+                var time = document.getElementById("time").innerHTML;
+                var min = parseInt(time.split(":", 1));
+                var sec = parseInt(time.split(":").pop());
+                var examTime = min * 60 + sec;
+                function startTimer(duration, display) {
+                    var timer = duration;
+                    var minutes, seconds;
+                    var form = document.forms.exam;
 
-                    display.textContent = minutes + ":" + seconds;
+                    var t = setInterval(function () {
+                        minutes = parseInt(timer / 60, 10);
+                        seconds = parseInt(timer % 60, 10);
+                        minutes = minutes < 10 ? "0" + minutes : minutes;
+                        seconds = seconds < 10 ? "0" + seconds : seconds;
 
-                    if (--timer <= 0) {
-                        timer = duration;
+                        display.textContent = minutes + ":" + seconds;
 
-                        if (!isNaN(t))
-                            clearInterval(t);
+                        if (--timer <= 0) {
+                            timer = duration;
 
-                        // submit the form...
-                        form.submit();
-                    }
-                }, 1000);
-            }
+                            if (!isNaN(t))
+                                clearInterval(t);
 
-            window.onload = function () {
-                var display = document.querySelector('#time');
-                startTimer(examTime, display);
-            };
-        </script>
+                            // submit the form...
+                            form.submit();
+                        }
+                    }, 1000);
+                }
+
+                window.onload = function () {
+                    var display = document.querySelector('#time');
+                    startTimer(examTime, display);
+                };
+            </script>
     </body>
 </html>

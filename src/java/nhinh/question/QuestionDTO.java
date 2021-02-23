@@ -6,6 +6,8 @@
 package nhinh.question;
 
 import java.io.Serializable;
+import java.util.List;
+import nhinh.answer.AnswerDTO;
 import nhinh.subject.SubjectDTO;
 
 /**
@@ -16,29 +18,22 @@ public class QuestionDTO implements Serializable{
     
     private String questionID;
     private String content;
-    private String answer1;
-    private String answer2;
-    private String answer3;
-    private String answer4;
-    private String answerCorrect;
     private String createDate;
     private SubjectDTO subjectDTO;
     private int statusID;
-
+    private List<AnswerDTO> answerList;
+    private String creator;
     public QuestionDTO() {
     }
 
-    public QuestionDTO(String questionID, String content, String answer1, String answer2, String answer3, String answer4, String answerCorrect, String createDate, SubjectDTO subjectDTO, int statusID) {
+    public QuestionDTO(String questionID, String content, String createDate, SubjectDTO subjectDTO, int statusID,List<AnswerDTO> answerList,String creator) {
         this.questionID = questionID;
         this.content = content;
-        this.answer1 = answer1;
-        this.answer2 = answer2;
-        this.answer3 = answer3;
-        this.answer4 = answer4;
-        this.answerCorrect = answerCorrect;
         this.createDate = createDate;
         this.subjectDTO = subjectDTO;
         this.statusID = statusID;
+        this.answerList = answerList;
+        this.creator = creator;
     }
 
     /**
@@ -67,76 +62,6 @@ public class QuestionDTO implements Serializable{
      */
     public void setContent(String content) {
         this.content = content;
-    }
-
-    /**
-     * @return the answer1
-     */
-    public String getAnswer1() {
-        return answer1;
-    }
-
-    /**
-     * @param answer1 the answer1 to set
-     */
-    public void setAnswer1(String answer1) {
-        this.answer1 = answer1;
-    }
-
-    /**
-     * @return the answer2
-     */
-    public String getAnswer2() {
-        return answer2;
-    }
-
-    /**
-     * @param answer2 the answer2 to set
-     */
-    public void setAnswer2(String answer2) {
-        this.answer2 = answer2;
-    }
-
-    /**
-     * @return the answer3
-     */
-    public String getAnswer3() {
-        return answer3;
-    }
-
-    /**
-     * @param answer3 the answer3 to set
-     */
-    public void setAnswer3(String answer3) {
-        this.answer3 = answer3;
-    }
-
-    /**
-     * @return the answer4
-     */
-    public String getAnswer4() {
-        return answer4;
-    }
-
-    /**
-     * @param answer4 the answer4 to set
-     */
-    public void setAnswer4(String answer4) {
-        this.answer4 = answer4;
-    }
-
-    /**
-     * @return the answerCorrect
-     */
-    public String getAnswerCorrect() {
-        return answerCorrect;
-    }
-
-    /**
-     * @param answerCorrect the answerCorrect to set
-     */
-    public void setAnswerCorrect(String answerCorrect) {
-        this.answerCorrect = answerCorrect;
     }
 
     /**
@@ -179,6 +104,34 @@ public class QuestionDTO implements Serializable{
      */
     public void setStatusID(int statusID) {
         this.statusID = statusID;
+    }
+
+    /**
+     * @return the answerList
+     */
+    public List<AnswerDTO> getAnswerList() {
+        return answerList;
+    }
+
+    /**
+     * @param answerList the answerList to set
+     */
+    public void setAnswerList(List<AnswerDTO> answerList) {
+        this.answerList = answerList;
+    }
+
+    /**
+     * @return the creator
+     */
+    public String getCreator() {
+        return creator;
+    }
+
+    /**
+     * @param creator the creator to set
+     */
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
     
     

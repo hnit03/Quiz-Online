@@ -27,7 +27,9 @@ import org.apache.log4j.BasicConfigurator;
  */
 @WebServlet(name = "SearchHistoryServlet", urlPatterns = {"/SearchHistoryServlet"})
 public class SearchHistoryServlet extends HttpServlet {
+
     private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SearchHistoryServlet.class.getName());
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -43,25 +45,43 @@ public class SearchHistoryServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         String url = "searchHistoryPage";
         BasicConfigurator.configure();
+        int pageNo = 1;
         try {
             /* TODO output your page here. You may use following sample code. */
             String searchValue = request.getParameter("searchValue");
             String categoryID = request.getParameter("cboCategory");
+            String pageNoStr = request.getParameter("pageNo");
+            String paging = request.getParameter("page");
+            if (pageNoStr != null) {
+                pageNo = Integer.parseInt(pageNoStr);
+            }
+            if (paging != null) {
+                if (paging.equals("Previous")) {
+                    pageNo -= 1;
+                } else if (paging.equals("Next")) {
+                    pageNo = pageNo + 1;
+                }
+            }
+            if (pageNo < 1) {
+                pageNo = 1;
+            }
             if (!searchValue.trim().isEmpty() || !categoryID.trim().isEmpty()) {
                 HistoryDAO dao = new HistoryDAO();
                 HttpSession session = request.getSession(false);
                 if (session != null) {
                     String email = (String) session.getAttribute("EMAIL");
-                    dao.searchHistory(searchValue, categoryID, email);
+                    dao.searchHistory(searchValue, categoryID, email, pageNo);
                     List<HistoryDTO> result = dao.getListHistory();
                     request.setAttribute("HISTORY_RESULT", result);
+                    request.setAttribute("PAGEMAX", dao.getNumberOfPage(email));
+                    request.setAttribute("PAGENO", pageNo);
                 }
 
             }
         } catch (SQLException ex) {
-            log.error("SearchHistoryServlet_SQL:"+ex.getMessage());
+            log.error("SearchHistoryServlet_SQL:" + ex.getMessage());
         } catch (NamingException ex) {
-            log.error("SearchHistoryServlet_Naming:"+ex.getMessage());
+            log.error("SearchHistoryServlet_Naming:" + ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

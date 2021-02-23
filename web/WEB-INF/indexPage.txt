@@ -28,3 +28,4 @@ searchHistory=SearchHistoryServlet
 searchHistoryPage=searchHistory.jsp
 student=subject.jsp
 getSubject=GetSubjectToCreateQuestionServlet
+error=error.jsp

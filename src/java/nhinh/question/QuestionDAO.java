@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.naming.NamingException;
+import nhinh.answer.AnswerDAO;
+import nhinh.answer.AnswerDTO;
 import nhinh.subject.SubjectDAO;
 import nhinh.subject.SubjectDTO;
 import nhinh.utils.DBHelper;
@@ -25,19 +27,22 @@ public class QuestionDAO implements Serializable {
 
     private final int RECORDS_IN_PAGE = 20;
     private List<QuestionDTO> questionList;
+    private Connection con = null;
+    private PreparedStatement ps = null;
+    private ResultSet rs = null;
 
     public List<QuestionDTO> getQuestionList() {
         return questionList;
     }
 
     public void getAllQuestionToTakeQuiz(String subjectID) throws SQLException, NamingException {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        AnswerDAO adao = new AnswerDAO();
+        SubjectDAO sdao = new SubjectDAO();
+
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select questionID,questionContent,answer1,answer2,answer3,answer4,answerCorrect,createDate,statusID "
+                String sql = "select questionID,questionContent,createDate,statusID,creator "
                         + "from Question "
                         + "where subjectID = ? and statusID = 0 "
                         + "ORDER BY NEWID()";
@@ -47,20 +52,24 @@ public class QuestionDAO implements Serializable {
                 while (rs.next()) {
                     String questionID = rs.getString("questionID");
                     String questionContent = rs.getString("questionContent");
-                    String answer1 = rs.getString("answer1");
-                    String answer2 = rs.getString("answer2");
-                    String answer3 = rs.getString("answer3");
-                    String answer4 = rs.getString("answer4");
-                    String answerCorrect = rs.getString("answerCorrect");
                     String createDate = rs.getString("createDate");
-                    SubjectDAO sdao = new SubjectDAO();
                     SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
                     int statusID = rs.getInt("statusID");
-                    QuestionDTO dto = new QuestionDTO(questionID, questionContent, answer1, answer2, answer3, answer4, answerCorrect, createDate, sdto, statusID);
+                    adao.getAllAnwserList(questionID);
+                    List<AnswerDTO> list = adao.getAnswerList();
+                    List<AnswerDTO> listAnswer = new ArrayList<>();
+                    if (list != null) {
+                        for (AnswerDTO answerDTO : list) {
+                            listAnswer.add(answerDTO);
+                        }
+                    }
+                    String creator = rs.getString("creator");
+                    QuestionDTO dto = new QuestionDTO(questionID, questionContent, createDate, sdto, statusID,listAnswer, creator);
                     if (this.questionList == null) {
                         this.questionList = new ArrayList<>();
                     }
                     this.questionList.add(dto);
+                    adao.removeListElem();
                 }
             }
         } finally {
@@ -77,13 +86,12 @@ public class QuestionDAO implements Serializable {
     }
 
     public void getAllQuestionByAdmin(String subjectID) throws SQLException, NamingException {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        SubjectDAO sdao = new SubjectDAO();
+        AnswerDAO adao = new AnswerDAO();
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select questionID,questionContent,answer1,answer2,answer3,answer4,answerCorrect,createDate,statusID "
+                String sql = "select questionID,questionContent,createDate,statusID,creator "
                         + "from Question "
                         + "where subjectID = ?";
                 ps = con.prepareStatement(sql);
@@ -91,21 +99,25 @@ public class QuestionDAO implements Serializable {
                 rs = ps.executeQuery();
                 while (rs.next()) {
                     String questionID = rs.getString("questionID");
-                    String questionContent = rs.getString("questionContent");
-                    String answer1 = rs.getString("answer1");
-                    String answer2 = rs.getString("answer2");
-                    String answer3 = rs.getString("answer3");
-                    String answer4 = rs.getString("answer4");
-                    String answerCorrect = rs.getString("answerCorrect");
+                    String content = rs.getString("questionContent");
                     String createDate = rs.getString("createDate");
-                    SubjectDAO sdao = new SubjectDAO();
                     SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
                     int statusID = rs.getInt("statusID");
-                    QuestionDTO dto = new QuestionDTO(questionID, questionContent, answer1, answer2, answer3, answer4, answerCorrect, createDate, sdto, statusID);
+                    adao.getAllAnwserList(questionID);
+                    List<AnswerDTO> list = adao.getAnswerList();
+                    List<AnswerDTO> listAnswer = new ArrayList<>();
+                    if (list != null) {
+                        for (AnswerDTO answerDTO : list) {
+                            listAnswer.add(answerDTO);
+                        }
+                    }
+                    String creator = rs.getString("creator");
+                    QuestionDTO dto = new QuestionDTO(questionID, content, createDate, sdto, statusID,listAnswer, creator);
                     if (this.questionList == null) {
                         this.questionList = new ArrayList<>();
                     }
                     this.questionList.add(dto);
+                    adao.removeListElem();
                 }
             }
         } finally {
@@ -122,14 +134,12 @@ public class QuestionDAO implements Serializable {
     }
 
     public QuestionDTO getQuestionDTO(String questionID) throws SQLException, NamingException {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        AnswerDAO adao = new AnswerDAO();
         QuestionDTO dto = null;
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select questionContent,answer1,answer2,answer3,answer4,answerCorrect,createDate,subjectID,statusID "
+                String sql = "select questionContent,createDate,subjectID,statusID "
                         + "from Question "
                         + "where questionID = ?";
                 ps = con.prepareStatement(sql);
@@ -137,17 +147,23 @@ public class QuestionDAO implements Serializable {
                 rs = ps.executeQuery();
                 if (rs.next()) {
                     String questionContent = rs.getString("questionContent");
-                    String answer1 = rs.getString("answer1");
-                    String answer2 = rs.getString("answer2");
-                    String answer3 = rs.getString("answer3");
-                    String answer4 = rs.getString("answer4");
-                    String answerCorrect = rs.getString("answerCorrect");
                     String createDate = rs.getString("createDate");
                     String subjectID = rs.getString("subjectID");
                     SubjectDAO sdao = new SubjectDAO();
                     SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
                     int statusID = rs.getInt("statusID");
-                    dto = new QuestionDTO(questionID, questionContent, answer1, answer2, answer3, answer4, answerCorrect, createDate, sdto, statusID);
+                    adao.getAllAnwserList(questionID);
+                    adao.getAllAnwserList(questionID);
+                    List<AnswerDTO> list = adao.getAnswerList();
+                    List<AnswerDTO> listAnswer = new ArrayList<>();
+                    if (list != null) {
+                        for (AnswerDTO answerDTO : list) {
+                            listAnswer.add(answerDTO);
+                        }
+                    }
+                    String creator = rs.getString("creator");
+                    dto = new QuestionDTO(questionID, questionContent, createDate, sdto, statusID,listAnswer, creator);
+                    adao.removeListElem();
                 }
             }
         } finally {
@@ -165,9 +181,6 @@ public class QuestionDAO implements Serializable {
     }
 
     public String getSubjectFromQuestion(String questionID) throws SQLException, NamingException {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
         String subjectID = "";
         try {
             con = DBHelper.makeConnection();
@@ -197,9 +210,6 @@ public class QuestionDAO implements Serializable {
     }
 
     public int getNumberOfQuestion(String subjectID) throws SQLException, NamingException {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
         int number = 0;
         try {
             con = DBHelper.makeConnection();
@@ -228,26 +238,19 @@ public class QuestionDAO implements Serializable {
         return number;
     }
 
-    public boolean createNewQuestion(String content, String answer1, String answer2, String answer3, String answer4, String answerCorrect, String createDate,
-            String subjectID, int statusID) throws SQLException, NamingException {
-        Connection con = null;
-        PreparedStatement ps = null;
+    public boolean createNewQuestion(String content, String createDate,
+            String subjectID, int statusID, String creator) throws SQLException, NamingException {
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "insert into Question(questionID,questionContent,answer1,answer2,answer3,answer4,answerCorrect,createDate,subjectID,statusID) "
-                        + "values(NEWID(),?,?,?,?,?,?,?,?,?)";
+                String sql = "insert into Question(questionID,questionContent,createDate,subjectID,statusID,creator) "
+                        + "values(NEWID(),?,?,?,?,?)";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, content);
-                ps.setString(2, answer1);
-                ps.setString(3, answer2);
-                ps.setString(4, answer3);
-                ps.setString(5, answer4);
-                ps.setString(6, answerCorrect);
-                ps.setString(7, createDate);
-                ps.setString(8, subjectID);
-                ps.setInt(9, statusID);
-
+                ps.setString(2, createDate);
+                ps.setString(3, subjectID);
+                ps.setInt(4, statusID);
+                ps.setString(5, creator);
                 int row = ps.executeUpdate();
                 if (row > 0) {
                     return true;
@@ -264,27 +267,22 @@ public class QuestionDAO implements Serializable {
         return false;
     }
 
-    public boolean updateQuestion(QuestionDTO dto) throws SQLException, NamingException {
+    public boolean updateQuestion(String questionContent, String createDate, String subjectID, int statusID, String questionID) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
                 String sql = "Update Question "
-                        + "Set questionContent = ?, answer1 = ?,answer2 = ?,answer3 = ?,answer4 = ?,answerCorrect = ?, "
+                        + "Set questionContent = ?, "
                         + "createDate = ?, subjectID = ?, statusID = ? "
                         + "where questionID = ?";
                 ps = con.prepareStatement(sql);
-                ps.setString(1, dto.getContent());
-                ps.setString(2, dto.getAnswer1());
-                ps.setString(3, dto.getAnswer2());
-                ps.setString(4, dto.getAnswer3());
-                ps.setString(5, dto.getAnswer4());
-                ps.setString(6, dto.getAnswerCorrect());
-                ps.setString(7, dto.getCreateDate());
-                ps.setString(8, dto.getSubjectDTO().getSubjectID());
-                ps.setInt(9, dto.getStatusID());
-                ps.setString(10, dto.getQuestionID());
+                ps.setString(1, questionContent);
+                ps.setString(2, createDate);
+                ps.setString(3, subjectID);
+                ps.setInt(4, statusID);
+                ps.setString(5, questionID);
                 int row = ps.executeUpdate();
                 if (row > 0) {
                     return true;
@@ -329,13 +327,12 @@ public class QuestionDAO implements Serializable {
     }
 
     public void searchQuestion(String searchValue, int status, int pageNo) throws SQLException, NamingException {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        SubjectDAO sdao = new SubjectDAO();
+        AnswerDAO adao = new AnswerDAO();
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select questionID,questionContent,answer1,answer2,answer3,answer4,answerCorrect,createDate,subjectID,statusID "
+                String sql = "select questionID,questionContent,createDate,subjectID,statusID,creator "
                         + "from Question "
                         + "where questionContent like ? and statusID = ? "
                         + "ORDER BY createDate ASC "
@@ -351,21 +348,25 @@ public class QuestionDAO implements Serializable {
                 while (rs.next()) {
                     String questionID = rs.getString("questionID");
                     String questionContent = rs.getString("questionContent");
-                    String answer1 = rs.getString("answer1");
-                    String answer2 = rs.getString("answer2");
-                    String answer3 = rs.getString("answer3");
-                    String answer4 = rs.getString("answer4");
-                    String answerCorrect = rs.getString("answerCorrect");
                     String createDate = rs.getString("createDate");
                     String subjectID = rs.getString("subjectID");
-                    SubjectDAO sdao = new SubjectDAO();
                     SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
                     int statusID = rs.getInt("statusID");
+                    adao.getAllAnwserList(questionID);
+                    List<AnswerDTO> list = adao.getAnswerList();
+                    List<AnswerDTO> listAnswer = new ArrayList<>();
+                    if (list != null) {
+                        for (AnswerDTO answerDTO : list) {
+                            listAnswer.add(answerDTO);
+                        }
+                    }
+                    String creator = rs.getString("creator");
+                    QuestionDTO dto = new QuestionDTO(questionID, questionContent, createDate, sdto, statusID,listAnswer, creator);
                     if (this.questionList == null) {
                         this.questionList = new ArrayList<>();
                     }
-                    QuestionDTO dto = new QuestionDTO(questionID, questionContent, answer1, answer2, answer3, answer4, answerCorrect, createDate, sdto, statusID);
                     this.questionList.add(dto);
+                    adao.removeListElem();
                 }
             }
         } finally {
@@ -381,10 +382,38 @@ public class QuestionDAO implements Serializable {
         }
     }
 
+    public String getLastQuestionID(String subjectID, String createDate, String creator) throws SQLException, NamingException {
+        String questionID = "";
+        try {
+            con = DBHelper.makeConnection();
+            if (con != null) {
+                String sql = "select questionID "
+                        + "from Question "
+                        + "where subjectID = ? and createDate = ? and creator = ? ";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, subjectID);
+                ps.setString(2, createDate);
+                ps.setString(3, creator);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    questionID = rs.getString("questionID");
+                }
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+        return questionID;
+    }
+
     public int getNumberOfPage(String searchValue, int status) throws SQLException, NamingException {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
         int size = 0;
         int numofpages = 0;
         try {

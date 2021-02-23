@@ -26,7 +26,9 @@ import org.apache.log4j.BasicConfigurator;
  */
 @WebServlet(name = "ManageSubjectServlet", urlPatterns = {"/ManageSubjectServlet"})
 public class ManageSubjectServlet extends HttpServlet {
+
     private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ManageSubjectServlet.class.getName());
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -40,21 +42,25 @@ public class ManageSubjectServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String url = "manageQuestion";
+        String url = "error";
         BasicConfigurator.configure();
-        try{
+        try {
             /* TODO output your page here. You may use following sample code. */
             String subjectID = request.getParameter("subjectID");
-            QuestionDAO dao = new QuestionDAO();
-            dao.getAllQuestionByAdmin(subjectID);
-            List<QuestionDTO> list = dao.getQuestionList();
-            request.setAttribute("LIST_QUESTION", list);
-            request.setAttribute("SUBJECTID", subjectID);
+            if (subjectID != null) {
+                QuestionDAO dao = new QuestionDAO();
+                dao.getAllQuestionByAdmin(subjectID);
+                List<QuestionDTO> list = dao.getQuestionList();
+                request.setAttribute("LIST_QUESTION", list);
+                request.setAttribute("SUBJECTID", subjectID);
+                url = "manageQuestion";
+            }
+
         } catch (SQLException ex) {
-            log.error("ManageSubjectServlet_SQL:"+ex.getMessage());
+            log.error("ManageSubjectServlet_SQL:" + ex.getMessage());
         } catch (NamingException ex) {
-            log.error("ManageSubjectServlet_Naming:"+ex.getMessage());
-        }finally{
+            log.error("ManageSubjectServlet_Naming:" + ex.getMessage());
+        } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
             out.close();

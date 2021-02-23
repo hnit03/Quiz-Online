@@ -13,8 +13,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.naming.NamingException;
-import nhinh.category.CategoryDAO;
-import nhinh.category.CategoryDTO;
 import nhinh.utils.DBHelper;
 
 /**
@@ -34,11 +32,10 @@ public class SubjectDAO implements Serializable {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        CategoryDAO cdao = new CategoryDAO();
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select subjectID,subjectName,time,statusID,categoryID "
+                String sql = "select subjectID,subjectName,time,statusID "
                         + "from Subject "
                         + "where statusID = 0";
                 ps = con.prepareStatement(sql);
@@ -49,9 +46,7 @@ public class SubjectDAO implements Serializable {
                     String subjectName = rs.getString("subjectName");
                     String time = rs.getString("time");
                     int statusID = rs.getInt("statusID");
-                    String categoryID = rs.getString("categoryID");
-                    CategoryDTO cdto = cdao.getCategoryDTO(categoryID);
-                    SubjectDTO dto = new SubjectDTO(subjectID, subjectName, time, statusID, cdto);
+                    SubjectDTO dto = new SubjectDTO(subjectID, subjectName, time, statusID);
                     if (this.subjectList == null) {
                         this.subjectList = new ArrayList<>();
                     }
@@ -75,11 +70,10 @@ public class SubjectDAO implements Serializable {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        CategoryDAO cdao = new CategoryDAO();
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select subjectID,subjectName,time,statusID,categoryID "
+                String sql = "select subjectID,subjectName,time,statusID "
                         + "from Subject "
                         + "where statusID = 0";
                 ps = con.prepareStatement(sql);
@@ -89,9 +83,7 @@ public class SubjectDAO implements Serializable {
                     String subjectName = rs.getString("subjectName");
                     String time = rs.getString("time");
                     int statusID = rs.getInt("statusID");
-                    String categoryID = rs.getString("categoryID");
-                    CategoryDTO cdto = cdao.getCategoryDTO(categoryID);
-                    SubjectDTO dto = new SubjectDTO(subjectID, subjectName, time, statusID, cdto);
+                    SubjectDTO dto = new SubjectDTO(subjectID, subjectName, time, statusID);
                     if (this.subjectList == null) {
                         this.subjectList = new ArrayList<>();
                     }
@@ -116,11 +108,10 @@ public class SubjectDAO implements Serializable {
         PreparedStatement ps = null;
         ResultSet rs = null;
         SubjectDTO dto = null;
-        CategoryDAO cdao = new CategoryDAO();
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select subjectID,subjectName,time,statusID,categoryID "
+                String sql = "select subjectID,subjectName,time,statusID "
                         + "from Subject "
                         + "where subjectID = ?";
                 ps = con.prepareStatement(sql);
@@ -131,9 +122,7 @@ public class SubjectDAO implements Serializable {
                     String subjectName = rs.getString("subjectName");
                     String time = rs.getString("time");
                     int statusID = rs.getInt("statusID");
-                    String categoryID = rs.getString("categoryID");
-                    CategoryDTO cdto = cdao.getCategoryDTO(categoryID);
-                    dto = new SubjectDTO(subjectID, subjectName, time, statusID, cdto);
+                    dto = new SubjectDTO(subjectID, subjectName, time, statusID);
                 }
             }
         } finally {
@@ -183,11 +172,10 @@ public class SubjectDAO implements Serializable {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        CategoryDAO cdao = new CategoryDAO();
         try {
             con = DBHelper.makeConnection();
             if (con != null) {
-                String sql = "select subjectID,subjectName,time,statusID,categoryID "
+                String sql = "select subjectID,subjectName,time,statusID "
                         + "from Subject "
                         + "where subjectName like ? and statusID = ? "
                         + "ORDER BY subjectName ASC " 
@@ -205,12 +193,10 @@ public class SubjectDAO implements Serializable {
                     String subjectName = rs.getString("subjectName");
                     String time = rs.getString("time");
                     int statusID = rs.getInt("statusID");
-                    String categoryID = rs.getString("categoryID");
-                    CategoryDTO cdto = cdao.getCategoryDTO(categoryID);
                     if (this.subjectList == null) {
                         this.subjectList = new ArrayList<>();
                     }
-                    SubjectDTO dto = new SubjectDTO(subjectID, subjectName, time, statusID,cdto);
+                    SubjectDTO dto = new SubjectDTO(subjectID, subjectName, time, statusID);
                     this.subjectList.add(dto);
                 }
             }

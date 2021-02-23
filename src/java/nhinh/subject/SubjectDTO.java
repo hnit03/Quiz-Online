@@ -6,7 +6,6 @@
 package nhinh.subject;
 
 import java.io.Serializable;
-import nhinh.category.CategoryDTO;
 
 /**
  *
@@ -18,17 +17,15 @@ public class SubjectDTO implements Serializable{
     private String subjectName;
     private String time;
     private int statusID;
-    private CategoryDTO cdto;
 
     public SubjectDTO() {
     }
 
-    public SubjectDTO(String subjectID, String subjectName, String time,int statusID,CategoryDTO cdto) {
+    public SubjectDTO(String subjectID, String subjectName, String time,int statusID) {
         this.subjectID = subjectID;
         this.subjectName = subjectName;
         this.time = time;
         this.statusID = statusID;
-        this.cdto = cdto;
     }
 
     /**
@@ -85,23 +82,5 @@ public class SubjectDTO implements Serializable{
      */
     public void setStatusID(int statusID) {
         this.statusID = statusID;
-    }
-
-    /**
-     * @return the cdto
-     */
-    public CategoryDTO getCdto() {
-        return cdto;
-    }
-
-    /**
-     * @param cdto the cdto to set
-     */
-    public void setCdto(CategoryDTO cdto) {
-        this.cdto = cdto;
-    }
-    
-    
-    
-    
+    }  
 }

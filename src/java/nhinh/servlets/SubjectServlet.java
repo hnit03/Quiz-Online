@@ -27,7 +27,9 @@ import org.apache.log4j.BasicConfigurator;
  */
 @WebServlet(name = "SubjectServlet", urlPatterns = {"/SubjectServlet"})
 public class SubjectServlet extends HttpServlet {
+
     private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SubjectServlet.class.getName());
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -53,18 +55,22 @@ public class SubjectServlet extends HttpServlet {
                     String role = (String) roleObj;
                     if (role.equals("Admin")) {
                         dao.getAllSubject();
+                        List<SubjectDTO> list = dao.getSubjectList();
+                        request.setAttribute("SUBJECT", list);
+                        url = "admin";
                     }
                     if (role.equals("Student")) {
                         dao.getAllSubjectByStudent();
+                        List<SubjectDTO> list = dao.getSubjectList();
+                        request.setAttribute("SUBJECT", list);
+                        url = "student";
                     }
-                    List<SubjectDTO> list = dao.getSubjectList();
-                    request.setAttribute("SUBJECT", list);
                 }
             }
         } catch (SQLException ex) {
-            log.error("SubjectServlet_SQL:"+ex.getMessage());
+            log.error("SubjectServlet_SQL:" + ex.getMessage());
         } catch (NamingException ex) {
-            log.error("SubjectServlet_Naming:"+ex.getMessage());
+            log.error("SubjectServlet_Naming:" + ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

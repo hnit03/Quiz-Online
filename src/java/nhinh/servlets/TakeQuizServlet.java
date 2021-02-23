@@ -29,7 +29,9 @@ import org.apache.log4j.BasicConfigurator;
  */
 @WebServlet(name = "TakeQuizServlet", urlPatterns = {"/TakeQuizServlet"})
 public class TakeQuizServlet extends HttpServlet {
+
     private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TakeQuizServlet.class.getName());
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -48,25 +50,28 @@ public class TakeQuizServlet extends HttpServlet {
         try {
             /* TODO output your page here. You may use following sample code. */
             String subjectID = request.getParameter("subjectID");
-            QuestionDAO qdao =new QuestionDAO();
+            QuestionDAO qdao = new QuestionDAO();
             SubjectDAO sdao = new SubjectDAO();
-            SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
-            qdao.getAllQuestionToTakeQuiz(subjectID);
-            int numberOfQuestion = qdao.getNumberOfQuestion(subjectID);
-            
-            List<QuestionDTO> list = qdao.getQuestionList();
-            request.setAttribute("QUESTION_LIST", list);
-            request.setAttribute("SUBJECT", sdto);
-            HttpSession session = request.getSession();
-            
-            
-            session.setAttribute("NUM_QUESTION", numberOfQuestion);
-            request.setAttribute("SUBJECTID", subjectID);
+            if (subjectID != null) {
+                SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
+                qdao.getAllQuestionToTakeQuiz(subjectID);
+                int numberOfQuestion = qdao.getNumberOfQuestion(subjectID);
+
+                List<QuestionDTO> list = qdao.getQuestionList();
+
+                request.setAttribute("QUESTION_LIST", list);
+                request.setAttribute("SUBJECT", sdto);
+                HttpSession session = request.getSession();
+
+                session.setAttribute("NUM_QUESTION", numberOfQuestion);
+                request.setAttribute("SUBJECTID", subjectID);
+            }
+
         } catch (SQLException ex) {
-            log.error("TakeQuizServlet_SQL:"+ex.getMessage());
+            log.error("TakeQuizServlet_SQL:" + ex.getMessage());
         } catch (NamingException ex) {
-            log.error("TakeQuizServlet_Naming:"+ex.getMessage());
-        }finally{
+            log.error("TakeQuizServlet_Naming:" + ex.getMessage());
+        } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
             out.close();

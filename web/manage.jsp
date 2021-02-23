@@ -35,10 +35,14 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Question ${counter.count}: ${dto.content}</h5>
-                                    <p>Answer 1: ${dto.answer1}</p>
-                                    <p>Answer 2: ${dto.answer2}</p>
-                                    <p>Answer 3: ${dto.answer3}</p>
-                                    <p>Answer 4: ${dto.answer4}</p>
+                                    <c:set var="listAnswer" value="${dto.answerList}"/>
+                                    <c:forEach var="answer" items="${listAnswer}">
+                                        <input class="form-check-input" type="radio" name="answerID" value="${answer.answerID}" id="${answer.answerID}">
+                                        <label class="form-check-label" for="${answer.answerID}">
+                                            ${answer.answerContent}
+                                        </label>
+                                        <br>
+                                    </c:forEach>
                                     <div class="row">
                                         <div class="col-lg-9"></div>
                                         <div class="col-lg-3 text-center">
@@ -68,11 +72,11 @@
             </c:if>
             <c:if test="${empty questionList}">
                 <div class="text-center">
-                    
+
                     <c:url var="create" value="getSubject">
                         <c:param name="subjectID" value="${requestScope.SUBJECTID}"/>
                     </c:url>
-                    
+
                     <h2>No question with this subject</h2>
                     <p>Please create new question <a href="${create}">Create</a></p>
                 </div>

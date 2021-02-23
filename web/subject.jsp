@@ -25,7 +25,6 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">${dto.subjectName}</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">${dto.cdto.categoryName}</h6>
                                     <p class="card-text">Time: ${dto.time}</p>
                                     <form action="takeQuiz" method="POST">
                                         <input type="hidden" name="subjectID" value="${dto.subjectID}" />

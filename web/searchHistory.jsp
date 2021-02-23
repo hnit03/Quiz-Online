@@ -19,32 +19,32 @@
         <div class="container">
             <c:set var="listHisory" value="${requestScope.HISTORY_RESULT}"/>
 
-            <table class="table">
+            <table class="table" style="height: 980px;">
                 <thead>
                     <tr>
-                        <form action="searchHistory">
-                            <th colspan="2" style="width: 654px;">
-                                <input type="text" name="searchValue" value="${param.searchValue}" class="form-control"/>
-                            </th>
-                            <th style="width: 249px;">
-                                <select class="form-select form-control" name="cboCategory">
-                                    <c:set var="category" value="${applicationScope.CATEGORY}"/>
-                                    <c:if test="${not empty category}">
-                                        <option value="">Category</option>
-                                        <c:forEach var="dto" items="${category}">
-                                            <option value="${dto.categoryID}"
-                                                    <c:if test="${dto.categoryID eq param.cboCategory}">
-                                                        selected
-                                                    </c:if>
-                                                    >${dto.categoryName}</option>
-                                        </c:forEach>
-                                    </c:if>
-                                </select>
-                            </th>
-                            <th>
-                                <input type="submit" value="Search" class="btn btn-success form-control"/>
-                            </th>
-                        </form>
+                <form action="searchHistory">
+                    <th colspan="2" style="width: 654px;">
+                        <input type="text" name="searchValue" value="${param.searchValue}" class="form-control"/>
+                    </th>
+                    <th style="width: 249px;">
+                        <select class="form-select form-control" name="cboCategory">
+                            <c:set var="category" value="${applicationScope.CATEGORY}"/>
+                            <c:if test="${not empty category}">
+                                <option value="">Category</option>
+                                <c:forEach var="dto" items="${category}">
+                                    <option value="${dto.categoryID}"
+                                            <c:if test="${dto.categoryID eq param.cboCategory}">
+                                                selected
+                                            </c:if>
+                                            >${dto.categoryName}</option>
+                                </c:forEach>
+                            </c:if>
+                        </select>
+                    </th>
+                    <th>
+                        <input type="submit" value="Search" class="btn btn-success form-control"/>
+                    </th>
+                </form>
                 </tr>
                 <tr>
                     <th scope="col">Subject Name</th>
@@ -53,7 +53,7 @@
                     <th scope="col">Create Date</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody >
                     <c:if test="${not empty listHisory}">
                         <c:forEach var="dto" items="${listHisory}">
                             <tr>
@@ -70,7 +70,43 @@
                         </tr>
                     </c:if>
                 </tbody>
+
             </table>
+            <c:if test="${not empty listHisory}">
+                <nav aria-label="Page navigation example">
+                    <c:set var="pageNo" value="${requestScope.PAGENO}"/>  
+                    <c:set var="pageMax" value="${requestScope.PAGEMAX}"/>
+                    <c:if test="${pageMax > 1}">
+                        <form action="searchHistory">
+                            <ul class="pagination justify-content-end">
+                                <c:if test="${pageNo <= 1}">
+                                    <li class="page-item disabled">
+                                        <input type="submit" value="Previous" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>
+                                <c:if test="${pageNo > 1}">
+                                    <li class="page-item">
+                                        <input type="submit" value="Previous" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>
+                                <c:if test="${pageNo < pageMax}">
+                                    <li class="page-item">
+                                        <input type="submit" value="Next" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>   
+                                <c:if test="${pageNo == pageMax}">
+                                    <li class="page-item disabled">
+                                        <input type="submit" value="Next" name="page" class="page-link"/>
+                                    </li>   
+                                </c:if>
+                                <input type="hidden" name="searchValue" value="${param.searchValue}" />
+                                <input type="hidden" name="cboCategory" value="${param.cboCategory}" />
+                                <input type="hidden" name="pageNo" value="${pageNo}" />
+                            </ul>
+                        </form>
+                    </c:if>
+                </nav>
+            </c:if>
         </div>
     </body>
 </html>

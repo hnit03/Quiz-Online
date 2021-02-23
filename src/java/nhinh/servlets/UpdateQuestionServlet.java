@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import nhinh.answer.AnswerDAO;
 import nhinh.question.QuestionDAO;
 import nhinh.question.QuestionDTO;
 import org.apache.log4j.BasicConfigurator;
@@ -24,7 +25,9 @@ import org.apache.log4j.BasicConfigurator;
  */
 @WebServlet(name = "UpdateQuestionServlet", urlPatterns = {"/UpdateQuestionServlet"})
 public class UpdateQuestionServlet extends HttpServlet {
+
     private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpdateQuestionServlet.class.getName());
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -43,30 +46,34 @@ public class UpdateQuestionServlet extends HttpServlet {
         try {
             /* TODO output your page here. You may use following sample code. */
             String questionID = request.getParameter("questionID");
-            String content  = request.getParameter("content");
-            String answer1 = request.getParameter("answer1");
-            String answer2 = request.getParameter("answer2");
-            String answer3 = request.getParameter("answer3");
-            String answer4 = request.getParameter("answer4");
+            String content = request.getParameter("content");
+            String[] answerContent = request.getParameterValues("answer");
             String answerCorrect = request.getParameter("answerCorrect");
             String status = request.getParameter("cboStatus");
             if (!questionID.trim().isEmpty()) {
                 QuestionDAO qdao = new QuestionDAO();
                 QuestionDTO oldDTO = qdao.getQuestionDTO(questionID);
                 int statusID = Integer.parseInt(status);
-                QuestionDTO newDTO = new QuestionDTO(questionID, content, answer1, answer2, answer3, answer4, answerCorrect,
-                        oldDTO.getCreateDate(), oldDTO.getSubjectDTO(), statusID);
-                boolean success = qdao.updateQuestion(newDTO);
-                
+                boolean success = qdao.updateQuestion(content, oldDTO.getCreateDate(), oldDTO.getSubjectDTO().getSubjectID(), statusID, oldDTO.getQuestionID());
+                boolean type = false;
                 if (success) {
-                    urlRewriting = "manage?subjectID="+oldDTO.getSubjectDTO().getSubjectID();
+                    AnswerDAO adao = new AnswerDAO();
+                    for (String answer : answerContent) {
+                        if (answer.equals(answerCorrect)) {
+                            type = true;
+                            adao.insertAnwser(questionID, answer, type);
+                        } else {
+                            adao.insertAnwser(questionID, answer, type);
+                        }
+                    }
+                    urlRewriting = "manage?subjectID=" + oldDTO.getSubjectDTO().getSubjectID();
                 }
             }
         } catch (SQLException ex) {
-            log.error("UpdateQuestionServlet_SQL:"+ex.getMessage());
+            log.error("UpdateQuestionServlet_SQL:" + ex.getMessage());
         } catch (NamingException ex) {
-            log.error("UpdateQuestionServlet_Naming:"+ex.getMessage());
-        }finally{
+            log.error("UpdateQuestionServlet_Naming:" + ex.getMessage());
+        } finally {
             response.sendRedirect(urlRewriting);
             out.close();
         }

@@ -26,7 +26,9 @@
                             <label for="email" class="form-label">Email:</label>
                             <input type="email" class="form-control" 
                                    id="email" placeholder="name@example.com" required
-                                   name="txtEmail" value="${param.txtEmail}">
+                                   name="txtEmail" value="${param.txtEmail}"
+                                   minlength="6"
+                                   >
                             <c:if test="${not empty error.emailIsExist}">
                                 <font color="red">${error.emailIsExist}</font>
                             </c:if>
@@ -34,13 +36,16 @@
                         <div class="mb-3">
                             <label for="password" class="form-label">Password:</label>
                             <input type="password" class="form-control" id="password" placeholder="Password" required
-                                   name="txtPassword" value="${param.txtPassword}">
+                                   name="txtPassword" value="${param.txtPassword}"
+                                   minlength="6" maxlength="32">
                         </div> 
                         <div class="mb-3">
-                            <label for="Password" class="form-label">Password:</label>
+                            <label for="Password" class="form-label">Confirm Password:</label>
                             <input type="password" class="form-control" 
                                    id="email" placeholder="Password" required
-                                   name="txtConfirmPassword" value="${param.txtConfirmPassword}">
+                                   name="txtConfirmPassword" value="${param.txtConfirmPassword}"
+                                   minlength="6" maxlength="32"
+                                   >
                             <c:if test="${not empty error.comfirmNotMatch}">
                                 <font color="red">${error.comfirmNotMatch}</font>
                             </c:if>
@@ -49,7 +54,8 @@
                             <label for="fullname" class="form-label">Fullname:</label>
                             <input type="text" class="form-control" 
                                    id="email" placeholder="Fullname" required
-                                   name="txtFullname" value="${param.txtFullname}">
+                                   name="txtFullname" value="${param.txtFullname}"
+                                   >
                         </div>
                         <input type="submit" class="btn btn-danger form-control mb-1" name="btnAction" value="Register"/>
                         <button type="button" class="btn btn-warning form-control">Reset</button>

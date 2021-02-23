@@ -16,6 +16,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import nhinh.answer.AnswerDAO;
 import nhinh.question.QuestionDAO;
 import nhinh.utils.Utils;
 import org.apache.log4j.BasicConfigurator;
@@ -26,9 +28,10 @@ import org.apache.log4j.BasicConfigurator;
  */
 @WebServlet(name = "CreateQuestionServlet", urlPatterns = {"/CreateQuestionServlet"})
 public class CreateQuestionServlet extends HttpServlet {
-    
+
     private final int statusID = 0;
     private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CreateQuestionServlet.class.getName());
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -43,31 +46,46 @@ public class CreateQuestionServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         Date date = new Date();
-        String url = "subject";
+        String url = "error";
         BasicConfigurator.configure();
         try {
             /* TODO output your page here. You may use following sample code. */
             String content = request.getParameter("content");
-            String answer1 = request.getParameter("answer1");
-            String answer2 = request.getParameter("answer2");
-            String answer3 = request.getParameter("answer3");
-            String answer4 = request.getParameter("answer4");
+            String[] answerContent = request.getParameterValues("answer");
             String answerCorr = request.getParameter("answerCorrect");
             String subjectID = request.getParameter("subjectID");
-            if (!content.trim().isEmpty() && !answer1.trim().isEmpty() && !answer2.trim().isEmpty()
-                    && !answer3.trim().isEmpty() && !answer4.trim().isEmpty() && !answerCorr.trim().isEmpty()) {
-                QuestionDAO dao = new QuestionDAO();
-                Utils utils = new Utils();
-                String createDate = utils.formatDateToString(date);
-                boolean success = dao.createNewQuestion(content, answer1, answer2, answer3, answer4, answerCorr, createDate, subjectID, statusID);
-                if (success) {
-                    request.setAttribute("CREATE", "Create Successfully!");
+            boolean type = false;
+            if (!content.trim().isEmpty() && answerContent != null && !answerCorr.trim().isEmpty()) {
+                HttpSession session = request.getSession(false);
+                if (session != null) {
+                    String email = (String) session.getAttribute("EMAIL");
+                    if (email != null) {
+                        QuestionDAO dao = new QuestionDAO();
+                        Utils utils = new Utils();
+                        String createDate = utils.formatDateToString(date);
+                        boolean successQuestion = dao.createNewQuestion(content, createDate, subjectID, statusID, email);
+                        if (successQuestion) {
+                            String questionID = dao.getLastQuestionID(subjectID, createDate, email);
+                            AnswerDAO adao = new AnswerDAO();
+                            for (String answer : answerContent) {
+                                if (answer.equals(answerCorr)) {
+                                    type = true;
+                                    adao.insertAnwser(questionID, answer, type);
+                                }else{
+                                    adao.insertAnwser(questionID, answer, type);
+                                }
+                            }
+                            url = "subject";
+                        }
+                    }
+
                 }
+
             }
         } catch (SQLException ex) {
-            log.error("CreateQuestion_SQL:"+ex.getMessage());
+            log.error("CreateQuestion_SQL:" + ex.getMessage());
         } catch (NamingException ex) {
-            log.error("CreateQuestion_Naming:"+ex.getMessage());
+            log.error("CreateQuestion_Naming:" + ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

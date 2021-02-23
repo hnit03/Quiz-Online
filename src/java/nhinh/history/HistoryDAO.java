@@ -55,7 +55,6 @@ public class HistoryDAO implements Serializable {
         return false;
     }
 
-
     public String getHistoryID(String email, String subjectID, String createDate) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
@@ -95,6 +94,7 @@ public class HistoryDAO implements Serializable {
     public List<HistoryDTO> getListHistory() {
         return listHistory;
     }
+    private final int RECORDS_IN_PAGE = 20;
 
     public void getListOfHistory(String email) throws SQLException, NamingException {
         Connection con = null;
@@ -107,9 +107,9 @@ public class HistoryDAO implements Serializable {
             if (con != null) {
                 String sql = "select historyID,subjectID,numOfCorrect, total,createDate "
                         + "from History "
-                        + "where email like ?";
+                        + "where email = ? ";
                 ps = con.prepareStatement(sql);
-                ps.setString(1, "%" + email + "%");
+                ps.setString(1, email);
                 rs = ps.executeQuery();
                 while (rs.next()) {
                     String historyID = rs.getString("historyID");
@@ -141,6 +141,41 @@ public class HistoryDAO implements Serializable {
         }
     }
 
+    public int getNumberOfPage(String email) throws SQLException, NamingException {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int size = 0;
+        int numofpages = 0;
+        try {
+            con = DBHelper.makeConnection();
+            String sql = "select count(historyID) as 'size' "
+                    + "from History "
+                    + "where email = ?";
+            if (con != null) {
+                ps = con.prepareStatement(sql);
+                ps.setString(1, email);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    size = rs.getInt("size");
+                }
+            }
+            numofpages = (int) Math.ceil(1.0 * size / RECORDS_IN_PAGE);
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+
+        }
+        return numofpages;
+    }
+
     public HistoryDTO getHistoryDTO(String historyID) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
@@ -159,11 +194,11 @@ public class HistoryDAO implements Serializable {
                     String email = rs.getString("email");
                     RegistrationDAO rdao = new RegistrationDAO();
                     RegistrationDTO rdto = rdao.getRegistrationDTO(email);
-                    
+
                     String subjectID = rs.getString("subjectID");
                     SubjectDAO sdao = new SubjectDAO();
                     SubjectDTO sdto = sdao.getSubjectDTO(subjectID);
-                    
+
                     int numOfCorrect = rs.getInt("numOfCorrect");
                     float total = rs.getFloat("total");
                     String createDate = rs.getString("createDate");
@@ -183,9 +218,8 @@ public class HistoryDAO implements Serializable {
         }
         return dto;
     }
-    
-    
-    public void searchHistory(String searchValue, String categoryID, String email) throws SQLException, NamingException {
+
+    public void searchHistory(String searchValue, String categoryID, String email, int pageNo) throws SQLException, NamingException {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -199,12 +233,17 @@ public class HistoryDAO implements Serializable {
                         + "where email = ? and subjectID in "
                         + "(select subjectID "
                         + "from Subject "
-                        + "where subjectName like ? and statusID = 0 and categoryID like ?) ";
+                        + "where subjectName like ? and statusID = 0 and categoryID like ?) "
+                        + "order by createDate asc "
+                        + "offset ? rows "
+                        + "fetch next ? row only";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, email);
                 ps.setString(2, "%" + searchValue + "%");
                 ps.setString(3, "%" + categoryID + "%");
-
+                int dismissRecord = (pageNo - 1) * RECORDS_IN_PAGE;
+                ps.setInt(4, dismissRecord);
+                ps.setInt(5, RECORDS_IN_PAGE);
                 rs = ps.executeQuery();
                 while (rs.next()) {
                     String historyID = rs.getString("historyID");

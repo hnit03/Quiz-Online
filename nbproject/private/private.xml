@@ -12,8 +12,19 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/src/java/nhinh/servlets/CheckAnswerServlet.java</file>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/web/register.jsp</file>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/src/java/nhinh/servlets/UpdateQuestionServlet.java</file>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/web/adminPage.jsp</file>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/src/java/nhinh/servlets/CreateQuestionServlet.java</file>
             <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/src/java/nhinh/question/QuestionDAO.java</file>
-            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/src/java/nhinh/servlets/SearchQuestionServlet.java</file>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/web/quiz.jsp</file>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/src/java/nhinh/servlets/TakeQuizServlet.java</file>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/src/java/nhinh/question/QuestionDTO.java</file>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/src/java/nhinh/filter/FilterDispatcher.java</file>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/src/java/nhinh/answer/AnswerDAO.java</file>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/src/java/nhinh/answer/AnswerDTO.java</file>
+            <file>file:/D:/FPT%20Semester%205%20Spring%202021/Tai%20Lieu%20Lab%20Web/J3LP0014/web/subject.jsp</file>
         </group>
     </open-files>
 </project-private>

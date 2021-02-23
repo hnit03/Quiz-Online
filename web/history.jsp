@@ -19,7 +19,7 @@
         <div class="container">
             <c:set var="listHisory" value="${requestScope.HISTORY}"/>
             <c:if test="${not empty listHisory}">
-                <table class="table">
+                <table class="table" >
                     <thead>
                         <tr>
                     <form action="searchHistory">
@@ -63,7 +63,6 @@
                         </c:forEach>
                     </tbody>
                 </table>
-
             </c:if>
             <c:if test="${empty listHisory}">
                 <h2 class="text-center"> No history</h2>
