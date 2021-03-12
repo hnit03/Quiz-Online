@@ -59,12 +59,12 @@ public class TakeQuizServlet extends HttpServlet {
 
                 List<QuestionDTO> list = qdao.getQuestionList();
 
-                request.setAttribute("QUESTION_LIST", list);
+                
                 request.setAttribute("SUBJECT", sdto);
                 HttpSession session = request.getSession();
 
                 session.setAttribute("NUM_QUESTION", numberOfQuestion);
-                request.setAttribute("SUBJECTID", subjectID);
+                session.setAttribute("QUESTION_LIST", list);
             }
 
         } catch (SQLException ex) {

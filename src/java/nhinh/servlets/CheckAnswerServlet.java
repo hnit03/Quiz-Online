@@ -19,10 +19,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import nhinh.answer.AnswerDAO;
 import nhinh.answer.AnswerDTO;
 import nhinh.history.HistoryDAO;
-import nhinh.question.QuestionDAO;
 import nhinh.question.QuestionDTO;
 import nhinh.utils.Utils;
 import org.apache.log4j.BasicConfigurator;
@@ -61,45 +59,42 @@ public class CheckAnswerServlet extends HttpServlet {
                 if (totalObj != null) {
                     int totalQuestion = (int) totalObj;
                     String subjectID = request.getParameter("subjectID");
-                    String[] questionIDStr = request.getParameterValues("questionID");
-            
-                    QuestionDAO dao = new QuestionDAO();
+                    List<QuestionDTO> listQuestion = (List<QuestionDTO>) session.getAttribute("QUESTION_LIST");
                     List<String> answerChosen = new ArrayList<>();
-                    List<QuestionDTO> list = new ArrayList<>();
-                    for (String questionID : questionIDStr) {
-                        QuestionDTO dto = dao.getQuestionDTO(questionID);
-                        list.add(dto);
-                        String answer = request.getParameter("answer"+questionID);
-                        answerChosen.add(answer);
+                    int numOfCorrect = 0;
+                    if (listQuestion != null) {
+                        for (QuestionDTO dto : listQuestion) {
+                            String answer = request.getParameter("answer" + dto.getQuestionID());
+                            answerChosen.add(answer);
+                        }
+                        if (answerChosen != null) {
+                            for (QuestionDTO qdto : listQuestion) {
+                                for (String answer : answerChosen) {
+                                    for (AnswerDTO answerDTO : qdto.getAnswerList()) {
+                                        if (answer.equals(answerDTO.getAnswerID())) {
+                                            if (answerDTO.isType()) {
+                                                numOfCorrect++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    
-                    AnswerDAO adao = new AnswerDAO();
-                    List<AnswerDTO> answer = new ArrayList<>();
-                    for (String a : answerChosen) {
-                        AnswerDTO adto = adao.getAnwserDTO(a);
-                        answer.add(adto);
-                    }
-                    
+
                     String email = (String) session.getAttribute("EMAIL");
                     float totalPoint = 0;
-
-                    int numOfCorrect = 0;
 
                     Utils utils = new Utils();
                     String createDate = utils.formatDateTimeToString(date);
                     HistoryDAO hdao = new HistoryDAO();
-                    for (AnswerDTO answerDTO : answer) {
-                        if (answerDTO.isType()) {
-                            numOfCorrect++;
-                        }
-                    }
                     session.removeAttribute("NUM_QUESTION");
                     totalPoint = (float) ((numOfCorrect / (1.0 * totalQuestion)) * 10);
-                    boolean success = hdao.insertHistory(email, subjectID, numOfCorrect,totalQuestion, totalPoint, createDate);
+                    boolean success = hdao.insertHistory(email, subjectID, numOfCorrect, totalQuestion, totalPoint, createDate);
                     if (success) {
                         url = "result";
                         String historyID = hdao.getHistoryID(email, subjectID, createDate);
-                        request.setAttribute("RESULT", hdao.getHistoryDTO(historyID));
+                        session.setAttribute("RESULT", hdao.getHistoryDTO(historyID));
                     }
                 }
 

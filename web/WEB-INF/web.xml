@@ -10,10 +10,6 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
-    <listener>
-        <description>ServletContextListener</description>
-        <listener-class>nhinh.listener.ServletContextListener</listener-class>
-    </listener>
     <session-config>
         <session-timeout>
             30

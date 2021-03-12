@@ -28,7 +28,8 @@
                                 <label class="form-label">Question Content:</label>
                                 <input type="text" class="form-control" 
                                        placeholder="Question Content" 
-                                       name="content" value="${dto.content}">
+                                       name="content" value="${dto.content}"
+                                       maxlength="250">
                             </div>
                             <c:set var="answerList" value="${dto.answerList}"/>
                             <c:if test="${not empty answerList}">
@@ -38,9 +39,11 @@
                                         <input type="text" class="form-control" placeholder="Answer"
                                                name="answer" value="${answer.answerContent}"
                                                id="answer${counter.count}"
-                                               onchange="addOption(${counter.count})">
+                                               onchange="addOption(${counter.count})"
+                                               maxlength="250">
                                     </div>
                                 </c:forEach>
+                            </c:if>
                                 <div id="answerDiv"></div>
                                 <span onclick="addAnswer()" class="btn btn-outline-secondary form-control">+</span>
                                 <p id="number" style="display: none;">5</p>
@@ -56,7 +59,7 @@
                                                 "id=\"answer" + number + "\" onchange=\"addOption("
                                                 + number
                                                 + ")\"" +
-                                                "required>";
+                                                "required maxlength=\"250\">";
                                         add.appendChild(div);
                                         document.getElementById("number").innerHTML = number + 1;
                                     }
@@ -86,7 +89,6 @@
 
                                     }
                                 </script>
-                            </c:if>
 
                             <div class="mb-3">
                                 <label class="form-label">Status:</label>
@@ -105,7 +107,11 @@
                             </div> 
                             <input type="submit" class="btn btn-danger form-control mb-1" name="btnAction" value="Update"/>
                             <input type="hidden" name="questionID" value="${dto.questionID}" />
-                            <button type="button" class="btn btn-warning form-control">Reset</button>
+                            <button type="button" class="btn btn-warning form-control mb-1">Reset</button>
+                            <c:url var="cancel" value="manage">
+                                <c:param name="subjectID" value="${requestScope.SUBJECTID}"/>
+                            </c:url>
+                            <a href="${cancel}" class="btn btn-secondary form-control mb-3">Cancel</a>
                         </form>
                     </c:if>
                 </div>

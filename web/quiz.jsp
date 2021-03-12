@@ -34,7 +34,7 @@
     <body>
         <jsp:include page="navbar.jsp"/>
         <div class="container">
-            <c:set var="listQuestion" value="${requestScope.QUESTION_LIST}"/>
+            <c:set var="listQuestion" value="${sessionScope.QUESTION_LIST}"/>
             <c:set var="sdto" value="${requestScope.SUBJECT}"/>
             <div class="py-5">
                 <c:if test="${not empty listQuestion && not empty sdto}">
@@ -126,7 +126,6 @@
                                             dots[slideIndex - 1].className += " active";
                                         }
                                     </script>
-                                    <input type="hidden" name="questionID" value="${question.questionID}" />
 
                                 </c:forEach>
                                 <div class="pagination justify-content-end">
@@ -138,7 +137,7 @@
                                 <div class="row">
                                     <div class="col-lg-10"></div>
                                     <div class="col-lg-2">
-                                        <input type="hidden" name="subjectID" value="${requestScope.SUBJECTID}" />
+                                        <input type="hidden" name="subjectID" value="${sdto.subjectID}" />
                                         <input type="submit" value="Finish" class="btn btn-success mb-3" style="width: 100%"/>
                                     </div>
                                 </div>
@@ -150,7 +149,6 @@
                     <div class="text-center">
                         <div class="">
                             <h5 class="">${sdto.subjectName}</h5>
-                            <h6 class="mb-2 text-muted">${sdto.cdto.categoryName}</h6>
                             <a href="subject" class="card-link">Back To Home Page</a>
                         </div>
                     </div>

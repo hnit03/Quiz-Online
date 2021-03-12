@@ -5,16 +5,20 @@
  */
 package nhinh.filter;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -51,12 +55,28 @@ public class FilterDispatcher implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-        ServletContext context = request.getServletContext();
-        Map<String, String> indexPage = (Map<String, String>) context.getAttribute("PAGE");
-        String uri = req.getRequestURI();
-        String url = "";
+
+        String filename = "indexPage.txt";
+        Map<String, String> indexPage = new HashMap<>();
+        String path = request.getServletContext().getRealPath("/");
+        File f = new File(path + "WEB-INF\\" + filename);
+        FileReader fr;
         BasicConfigurator.configure();
         try {
+            fr = new FileReader(f);
+            BufferedReader br = new BufferedReader(fr);
+            String line = "";
+            StringTokenizer stk = null;
+            while ((line = br.readLine()) != null) {
+                stk = new StringTokenizer(line, "=");
+                String key = stk.nextToken();
+                String value = stk.nextToken();
+                indexPage.put(key.trim(), value.trim());
+            }
+
+            String uri = req.getRequestURI();
+            String url = "";
+
             int lastIndex = uri.lastIndexOf("/");
             String resource = uri.substring(lastIndex + 1);
             if (!resource.equals(" ")) {
@@ -73,8 +93,7 @@ public class FilterDispatcher implements Filter {
                                     || resource.equals("historyPage")
                                     || resource.equals("searchHistory")
                                     || resource.equals("searchHistoryPage")
-                                    || resource.equals("student")
-                                    ) {
+                                    || resource.equals("student")) {
                                 resource = "subject";
                             }
                         }
@@ -103,7 +122,6 @@ public class FilterDispatcher implements Filter {
                             resource = "subject";
                         }
                     }
-
                 }
             }
             url = indexPage.get(resource);

@@ -26,10 +26,12 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Question: ${dto.content}</h5>
-                                    <p>Answer 1: ${dto.answer1}</p>
-                                    <p>Answer 2: ${dto.answer2}</p>
-                                    <p>Answer 3: ${dto.answer3}</p>
-                                    <p>Answer 4: ${dto.answer4}</p>
+                                    <c:set var="answerList" value="${dto.answerList}"/>
+                                    <c:if test="${not empty answerList}">
+                                        <c:forEach var="answer" items="${answerList}">
+                                            <p>Answer: ${answer.answerContent}</p>
+                                        </c:forEach>
+                                    </c:if>
                                     <div class="row">
                                         <div class="col-lg-9"></div>
                                         <div class="col-lg-3 text-center">

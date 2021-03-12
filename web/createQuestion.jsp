@@ -24,19 +24,21 @@
                     <form action="create" method="POST">
                         <div class="mb-3">
                             <label class="form-label">Question Content:</label>
-                            <input type="text" class="form-control" 
-                                   placeholder="Question Content" 
-                                   name="content" value="${param.content}"
-                                   required>
+                            <textarea class="form-control" 
+                                      placeholder="Question Content" 
+                                      name="content" value="${param.content}"
+                                      required maxlength="500"></textarea>
                         </div>
                         <c:forEach begin="0" end="3" varStatus="counter">
                             <div class="mb-3">
                                 <label class="form-label">Answer:</label>
-                                <input type="text" class="form-control" placeholder="Answer"
-                                       name="answer" value="${param.answer}"
-                                       id="answer${counter.count}"
-                                       onchange="addOption(${counter.count})"
-                                       required>
+                                <textarea class="form-control" 
+                                          placeholder="Answer" 
+                                          required maxlength="500"
+                                          name="answer" value="${param.answer}"
+                                          id="answer${counter.count}"
+                                          onchange="addOption(${counter.count})"
+                                    ></textarea>                                       
                             </div> 
                         </c:forEach>
                         <div id="answerDiv"></div>
@@ -49,12 +51,12 @@
                                 var add = document.getElementById("answerDiv");
                                 var div = document.createElement("DIV");
                                 div.className = "mb-3";
-                                div.innerHTML = "<label class=\"form-label\">Answer</label><input type=\"text\" class=\"form-control\" placeholder=\"Answer\"" +
+                                div.innerHTML = "<label class=\"form-label\">Answer</label><textarea class=\"form-control\" placeholder=\"Answer\"" +
                                         "name=\"answer\" value=\"\"" +
                                         "id=\"answer" + number + "\" onchange=\"addOption("
                                         + number
                                         + ")\"" +
-                                        "required>";
+                                        "required maxlength=\"500\"></textarea>";
                                 add.appendChild(div);
                                 document.getElementById("number").innerHTML = number + 1;
                             }
@@ -73,7 +75,7 @@
                                     c.text = text;
                                     c.value = text;
                                     x.options.add(c, size - 1);
-                                    var length = parseInt(document.getElementById("number")); 
+                                    var length = parseInt(document.getElementById("number"));
                                     if (x.options.length > length) {
                                         x.options.remove(id - 1);
                                         x.options.add(c, id - 1);
@@ -84,7 +86,11 @@
                         </div> 
                         <input type="submit" class="btn btn-danger form-control mb-1" name="btnAction" value="Create"/>
                         <input type="hidden" name="subjectID" value="${requestScope.SUBJECTID}" />
-                        <button type="button" class="btn btn-warning form-control">Reset</button>
+                        <button type="button" class="btn btn-warning form-control mb-1">Reset</button>
+                        <c:url var="cancel" value="manage">
+                            <c:param name="subjectID" value="${requestScope.SUBJECTID}"/>
+                        </c:url>
+                        <a href="${cancel}" class="btn btn-secondary form-control mb-3">Cancel</a>
                     </form>
                 </div>
                 <div class="col-lg-4"></div>

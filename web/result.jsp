@@ -20,7 +20,7 @@
             <div class="row">
                 <div class="col-lg-2"></div>
                 <div class="col-lg-8">
-                    <c:set var="dto" value="${requestScope.RESULT}"/>
+                    <c:set var="dto" value="${sessionScope.RESULT}"/>
                     
                     <table class="table table-info">
                         <thead>
