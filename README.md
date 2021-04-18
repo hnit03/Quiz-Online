@@ -1,3 +1,5 @@
+[![Practice CI with GitHub Actions using SonarCloud | © 2021 by hnit03](https://github.com/hnit03/Quiz-Online/actions/workflows/build.yml/badge.svg)](https://github.com/hnit03/Quiz-Online/actions/workflows/build.yml)
+
 # Quiz-Online
 
 ## Background
